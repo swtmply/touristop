@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "997576782837",
+    "project_id": "touristop-dev-c1abf",
+    "storage_bucket": "touristop-dev-c1abf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:997576782837:android:a2fde03a9e634962be26bc",
+        "android_client_info": {
+          "package_name": "com.example.touristop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "997576782837-cqpsk1qn99c6jderre402b4f8j3uqv73.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4pwxS6sRVZGg79ceNaHoQWfsoGB6Sevs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "997576782837-cqpsk1qn99c6jderre402b4f8j3uqv73.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "997576782837-kmc8nuclvraieru9ace9dmnd8pfhe1c3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.touristop"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
