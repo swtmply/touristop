@@ -7,6 +7,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:touristop/firebase/firestore/spots_firestore.dart';
 import 'package:touristop/main.dart';
 import 'package:touristop/models/tourist_spot_model.dart';
+import 'package:touristop/screens/main/map/widgets/floating_cards.dart';
+
+// ignore: todo
+// TODO implement hive and local spots db
 
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({Key? key}) : super(key: key);
@@ -20,6 +24,7 @@ class MapScreenState extends ConsumerState<MapScreen> {
   final _spotsFirestore = SpotsFirestore();
 
   Set<Marker> _markers = {};
+
   late PolylinePoints polylinePoints;
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
@@ -71,27 +76,15 @@ class MapScreenState extends ConsumerState<MapScreen> {
                   _controller.complete(controller);
 
                   _initMarkers(userPosition, snapshot.data!);
-
-                  // _createPolylines(userPosition, const LatLng(14.5826, 120.9787))
-                  // _animateToSpot(const LatLng(14.5826, 120.9787))
                 },
                 zoomControlsEnabled: false,
                 polylines: Set<Polyline>.of(polylines.values),
                 markers: _markers,
               ),
-              Positioned(
-                bottom: 20.0,
-                child: SizedBox(
-                  height: 200.0,
-                  width: MediaQuery.of(context).size.width,
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (context, index) =>
-                        _spotsList(index, snapshot.data![index]),
-                  ),
-                ),
-              )
+              FloatingCards(
+                pageController: _pageController,
+                spots: snapshot.data!,
+              ),
             ],
           );
         },
@@ -99,39 +92,30 @@ class MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 
-  _spotsList(int index, TouristSpot spot) {
-    return AnimatedBuilder(
-      animation: _pageController,
-      builder: (context, child) {
-        double value = 1;
-        if (_pageController.position.haveDimensions) {
-          value = _pageController.page! - index;
-          value = (1 - (value.abs() * 0.3) + 0.06).clamp(0.0, 1.0);
-        }
-        return Center(
-          child: SizedBox(
-            height: Curves.easeInOut.transform(value) * 130.0,
-            width: Curves.easeInOut.transform(value) * 350.0,
-            child: child,
-          ),
-        );
-      },
-      child: InkWell(
-        onTap: () {
-          // _createPolylines(userPosition, destination);
-          // _animateToSpot(position);
-        },
-        child: Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 5,
-          ),
-          height: 150.0,
-          width: 300.0,
-          color: Colors.white,
-          child: Text(spot.name.toString()),
-        ),
-      ),
+  // Initialize marker for map
+  Future<void> _initMarkers(
+    LatLng userPosition,
+    List<TouristSpot> spots,
+  ) async {
+    Marker userMarker = Marker(
+      markerId: const MarkerId('user marker'),
+      position: userPosition,
+      icon: BitmapDescriptor.defaultMarker,
     );
+
+    setState(() {
+      _markers = spots
+          .map(
+            (spot) => Marker(
+              markerId: MarkerId(spot.name.toString()),
+              position: const LatLng(14.5826, 120.9787),
+              icon: BitmapDescriptor.defaultMarker,
+            ),
+          )
+          .toSet();
+
+      _markers.add(userMarker);
+    });
   }
 
   _createPolylines(LatLng userPosition, LatLng destination) async {
@@ -169,30 +153,6 @@ class MapScreenState extends ConsumerState<MapScreen> {
     polylines[id] = polyline;
   }
 
-  // Initialize marker for map
-  Future<void> _initMarkers(
-      LatLng userPosition, List<TouristSpot> spots) async {
-    Marker userMarker = Marker(
-      markerId: const MarkerId('user marker'),
-      position: userPosition,
-      icon: BitmapDescriptor.defaultMarker,
-    );
-
-    setState(() {
-      _markers = spots
-          .map(
-            (spot) => Marker(
-              markerId: MarkerId(spot.name.toString()),
-              position: const LatLng(14.5826, 120.9787),
-              icon: BitmapDescriptor.defaultMarker,
-            ),
-          )
-          .toSet();
-
-      _markers.add(userMarker);
-    });
-  }
-
   // Animate Camera to spot
   Future<void> _animateToSpot(LatLng position) async {
     final GoogleMapController controller = await _controller.future;
@@ -210,6 +170,7 @@ class MapScreenState extends ConsumerState<MapScreen> {
     );
   }
 
+  // animate when scroll with floating cards
   void _onScroll() {
     if (_pageController.page?.toInt() != prevPage) {
       prevPage = _pageController.page!.toInt();

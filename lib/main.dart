@@ -7,7 +7,7 @@ import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/user_location_provider.dart';
 import 'package:touristop/screens/main/calendar/calendar_screen.dart';
 import 'package:touristop/screens/main/enable_location_screen.dart';
-import 'package:touristop/screens/main/map_screen.dart';
+import 'package:touristop/screens/main/map/map_screen.dart';
 
 final userLocationProvider =
     StateNotifierProvider<UserLocationProvider, UserLocation>(
