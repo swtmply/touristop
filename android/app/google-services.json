@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "997576782837-6oemb8n9d8lntq41fkeqa8dlisnadv59.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.touristop",
+            "certificate_hash": "23e9ae9b7b931e010bc6470da7622195948e9c67"
+          }
+        },
+        {
           "client_id": "997576782837-cqpsk1qn99c6jderre402b4f8j3uqv73.apps.googleusercontent.com",
           "client_type": 3
         }

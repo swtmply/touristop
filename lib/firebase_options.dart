@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -29,12 +26,31 @@ class DefaultFirebaseOptions {
         return ios;
       case TargetPlatform.macOS:
         return macos;
+      case TargetPlatform.windows:
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
+      case TargetPlatform.linux:
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for linux - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       default:
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
         );
     }
   }
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDtGdysJq6YG2CX9yvSOxBy1KS8rM_vTKQ',
+    appId: '1:997576782837:web:34ca06fcba2af61fbe26bc',
+    messagingSenderId: '997576782837',
+    projectId: 'touristop-dev-c1abf',
+    authDomain: 'touristop-dev-c1abf.firebaseapp.com',
+    storageBucket: 'touristop-dev-c1abf.appspot.com',
+  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyD4pwxS6sRVZGg79ceNaHoQWfsoGB6Sevs',
@@ -50,6 +66,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '997576782837',
     projectId: 'touristop-dev-c1abf',
     storageBucket: 'touristop-dev-c1abf.appspot.com',
+    androidClientId: '997576782837-6oemb8n9d8lntq41fkeqa8dlisnadv59.apps.googleusercontent.com',
     iosClientId: '997576782837-kmc8nuclvraieru9ace9dmnd8pfhe1c3.apps.googleusercontent.com',
     iosBundleId: 'com.example.touristop',
   );
@@ -60,6 +77,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '997576782837',
     projectId: 'touristop-dev-c1abf',
     storageBucket: 'touristop-dev-c1abf.appspot.com',
+    androidClientId: '997576782837-6oemb8n9d8lntq41fkeqa8dlisnadv59.apps.googleusercontent.com',
     iosClientId: '997576782837-kmc8nuclvraieru9ace9dmnd8pfhe1c3.apps.googleusercontent.com',
     iosBundleId: 'com.example.touristop',
   );
