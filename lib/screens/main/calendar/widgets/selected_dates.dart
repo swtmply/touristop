@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:touristop/main.dart';
 
 class SelectedDates extends ConsumerWidget {
-  const SelectedDates({Key? key}) : super(key: key);
+  const SelectedDates({Key? key, required this.controller}) : super(key: key);
+
+  final DateRangePickerController controller;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -12,17 +15,26 @@ class SelectedDates extends ConsumerWidget {
 
     if (data.dates.isEmpty) return const Text('Please select a date/s');
 
-    return Wrap(
-      runSpacing: 10,
-      spacing: 10,
-      children: data.dates
-          .map((date) => InkWell(
-                onTap: () {},
-                child: DateContainer(
-                  date: date,
-                ),
-              ))
-          .toList(),
+    return SizedBox(
+      height: 200,
+      child: SingleChildScrollView(
+        child: Wrap(
+          runSpacing: 10,
+          spacing: 10,
+          children: data.dates
+              .map((date) => InkWell(
+                    onTap: () {
+                      data.remove(date);
+                      controller
+                          .notifyPropertyChangedListeners('selectedDates');
+                    },
+                    child: DateContainer(
+                      date: date,
+                    ),
+                  ))
+              .toList(),
+        ),
+      ),
     );
   }
 }

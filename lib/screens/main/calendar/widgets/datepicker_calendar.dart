@@ -13,27 +13,33 @@ class DatePickerCalendar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(datesProvider);
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.45,
-      child: SfDateRangePicker(
-        controller: controller,
-        selectionMode: DateRangePickerSelectionMode.multiple,
-        enablePastDates: false,
-        showNavigationArrow: true,
-        selectionShape: DateRangePickerSelectionShape.rectangle,
-        onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
-          if (args.value is List<DateTime>) {
-            data.addAll(args.value);
-          }
-        },
-        headerStyle: const DateRangePickerHeaderStyle(
-          textAlign: TextAlign.center,
-          textStyle: TextStyle(
-            fontSize: 24,
-            color: Colors.black,
+    return ClipRect(
+      child: Align(
+        alignment: Alignment.topCenter,
+        heightFactor: 0.88,
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.45,
+          child: SfDateRangePicker(
+            controller: controller,
+            selectionMode: DateRangePickerSelectionMode.multiple,
+            enablePastDates: false,
+            showNavigationArrow: true,
+            selectionShape: DateRangePickerSelectionShape.circle,
+            onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+              if (args.value is List<DateTime>) {
+                data.addAll(args.value);
+              }
+            },
+            headerStyle: const DateRangePickerHeaderStyle(
+              textAlign: TextAlign.center,
+              textStyle: TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+              ),
+            ),
+            headerHeight: 60,
           ),
         ),
-        headerHeight: 60,
       ),
     );
   }
