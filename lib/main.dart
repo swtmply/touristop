@@ -2,19 +2,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:introduction_screen/introduction_screen.dart';
-import 'package:touristop/firebase/auth/google_signin.dart';
+import 'package:touristop/firebase/auth/auth_provider.dart';
 import 'package:touristop/firebase_options.dart';
-import 'package:touristop/models/tourist_spot_model.dart';
 import 'package:touristop/models/user_location_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/user_location_provider.dart';
 import 'package:touristop/screens/main/calendar/calendar_screen.dart';
 import 'package:touristop/screens/main/enable_location_screen.dart';
-import 'package:touristop/screens/main/login_screen.dart';
 import 'package:touristop/screens/main/map_screen.dart';
 import 'package:touristop/screens/sections/introduction.dart';
-import 'screens/main/login_screen.dart';
 import 'screens/main/select_spots_screen.dart';
 
 final userLocationProvider =
@@ -24,8 +20,8 @@ final userLocationProvider =
 final datesProvider =
     ChangeNotifierProvider<DatesProvider>((ref) => DatesProvider());
 
-final userProvider = ChangeNotifierProvider<GoogleSignInProvider>(
-    (ref) => GoogleSignInProvider());
+final authProvider =
+    ChangeNotifierProvider<AuthProvider>((ref) => AuthProvider());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

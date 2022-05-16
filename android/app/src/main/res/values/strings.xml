@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<string name = "app_name">Touristop</string>
-<string name="facebook_app_id">1018077475745206</string>
+<string name="app_name">touristop</string>
+
+<string name="facebook_app_id">396442505736075</string>
 <string name="fb_login_protocol_scheme">fb1234</string>
-<string name="facebook_client_token">a54dfb6e68d51e0b5889263c90127ac1</string>
+<string name="facebook_client_token">81395899cdffc59fb01b33e844050ac3</string>
+
 </resources>

@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:touristop/main.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class EnableLocationScreen extends ConsumerStatefulWidget {
   const EnableLocationScreen({Key? key}) : super(key: key);
@@ -36,40 +33,34 @@ class EnableLocationScreenState extends ConsumerState<EnableLocationScreen> {
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(userLocationProvider);
-    final auth = ref.watch(userProvider);
-    Size size = MediaQuery.of(context).size;
-    final user = FirebaseAuth.instance.currentUser!;
 
     return Scaffold(
       body: Column(
         children: [
-          Container(
-            child: Image.asset('assets/images/sec.png'),
-          ),
-          SizedBox(
+          Image.asset('assets/images/sec.png'),
+          const SizedBox(
             height: 70,
           ),
-          Container(
-            child: FlatButton(
-              padding: EdgeInsets.fromLTRB(75, 15, 75, 15),
+          TextButton(
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.fromLTRB(75, 15, 75, 15),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0)),
-              color: Color.fromRGBO(93, 107, 230, 1),
-              onPressed: () async {
-                data.userPosition = await _determinePosition();
+              backgroundColor: const Color.fromRGBO(93, 107, 230, 1),
+            ),
+            onPressed: () async {
+              data.userPosition = await _determinePosition();
 
-                if (data.userPosition != null) {
-                  Navigator.pushNamed(context, '/calendar');
-                }
-                // auth.googleLogout();
-              },
-              child: Text(
-                'Enable Location',
-                style: GoogleFonts.poppins(
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+              if (data.userPosition != null) {
+                Navigator.pushNamed(context, '/calendar');
+              }
+            },
+            child: Text(
+              'Enable Location',
+              style: GoogleFonts.poppins(
+                color: const Color.fromARGB(255, 255, 255, 255),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
