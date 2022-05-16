@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:touristop/main.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -80,42 +81,58 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
 
     return Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          FlatButton(
-            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0)),
-            color: const Color.fromRGBO(237, 237, 237, 1.0),
-            onPressed: () async {
-              _loginFacebook();
-            },
-            child: const Text(
-              'Facebook Login',
-              style: const TextStyle(
-                color: Color.fromRGBO(31, 31, 31, 1.0),
-                fontSize: 20,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            child: Image.asset(
+              "assets/images/login.png",
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.only(left: 40, right: 40),
+            width: double.infinity,
+            child: FlatButton(
+              padding: const EdgeInsets.only(top: 15, bottom: 15),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)),
+              color: const Color.fromRGBO(93, 107, 230, 1),
+              onPressed: () async {
+               _loginFacebook();
+              },
+              child: Text(
+                'Login with Facebook',
+                style: GoogleFonts.poppins(
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
-          if (loading) ...[
+           if (loading) ...[
             const SizedBox(height: 15),
             const Center(child: const CircularProgressIndicator()),
           ],
-          const SizedBox(height: 20),
-          FlatButton(
-            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0)),
-            color: const Color.fromRGBO(237, 237, 237, 1.0),
-            onPressed: () async {
-              data.googleLogin();
-            },
-            child: const Text(
-              'Google Login',
-              style: TextStyle(
-                color: Color.fromRGBO(31, 31, 31, 1.0),
-                fontSize: 20,
+          const SizedBox(height: 15),
+          Container(
+            padding: const EdgeInsets.only(left: 40, right: 40),
+            width: double.infinity,
+            child: FlatButton(
+              padding: const EdgeInsets.only(top: 15, bottom: 15),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)),
+              color: const Color.fromRGBO(93, 230, 197, 1),
+              onPressed: () async {
+                data.googleLogin();
+              },
+              child: Text(
+                'Login with Google',
+                style: GoogleFonts.poppins(
+                  color: const Color.fromARGB(255, 45, 45, 45),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),

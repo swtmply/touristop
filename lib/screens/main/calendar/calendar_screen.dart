@@ -29,7 +29,7 @@ class CalendarScreenState extends ConsumerState<CalendarScreen> {
               onPressed: data.dates.isEmpty
                   ? () {}
                   : () {
-                      Navigator.pushNamed(context, '/map');
+                      Navigator.pushNamed(context, '/select-spots');
                     },
               child: Text('Submit'),
             )

@@ -2,7 +2,7 @@
 <resources>
 
 <string name = "app_name">Touristop</string>
-<string name="facebook_app_id">1234</string>
+<string name="facebook_app_id">1018077475745206</string>
 <string name="fb_login_protocol_scheme">fb1234</string>
-<string name="facebook_client_token">56789</string>
+<string name="facebook_client_token">a54dfb6e68d51e0b5889263c90127ac1</string>
 </resources>
