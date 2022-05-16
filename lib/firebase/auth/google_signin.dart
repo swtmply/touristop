@@ -8,6 +8,11 @@ class GoogleSignInProvider extends ChangeNotifier {
   late GoogleSignInAccount _user;
   GoogleSignInAccount get user => _user;
 
+  Future googleLogout() async {
+    await googleSignIn.disconnect();
+    FirebaseAuth.instance.signOut();
+  }
+
   Future googleLogin() async {
     final googleUser = await googleSignIn.signIn();
 
@@ -22,7 +27,6 @@ class GoogleSignInProvider extends ChangeNotifier {
     );
 
     await FirebaseAuth.instance.signInWithCredential(credential);
-
     notifyListeners();
   }
 }

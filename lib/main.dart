@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:introduction_screen/introduction_screen.dart';
 import 'package:touristop/firebase/auth/google_signin.dart';
 import 'package:touristop/firebase_options.dart';
+import 'package:touristop/models/tourist_spot_model.dart';
 import 'package:touristop/models/user_location_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/user_location_provider.dart';
@@ -10,7 +13,9 @@ import 'package:touristop/screens/main/calendar/calendar_screen.dart';
 import 'package:touristop/screens/main/enable_location_screen.dart';
 import 'package:touristop/screens/main/login_screen.dart';
 import 'package:touristop/screens/main/map_screen.dart';
+import 'package:touristop/screens/sections/introduction.dart';
 import 'screens/main/login_screen.dart';
+import 'screens/main/select_spots_screen.dart';
 
 final userLocationProvider =
     StateNotifierProvider<UserLocationProvider, UserLocation>(
@@ -50,13 +55,27 @@ class MyApp extends ConsumerWidget {
         '/enable-location': (context) => const EnableLocationScreen(),
         '/map': (context) => const MapScreen(),
         '/calendar': (context) => const CalendarScreen(),
+        '/select-spots': (context) => SelectSpotsScreen(),
       },
-      home: const Scaffold(
+      home: Scaffold(
         body: SafeArea(
           // child: userLocation.userPosition != null
           //     ? const MapScreen()
           //     : const EnableLocationScreen(),
-          child: LoginScreen(),
+          child: StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasData) {
+                return EnableLocationScreen();
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Something went wrong'));
+              } else {
+                return OnBoardingPage();
+              }
+            },
+          ),
         ),
       ),
     );
