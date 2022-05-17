@@ -14,7 +14,7 @@ class SelectSpotsScreen extends StatefulWidget {
 
 class _SelectSpotsScreenState extends State<SelectSpotsScreen> {
   final Stream<QuerySnapshot> spots =
-      FirebaseFirestore.instance.collection('sample').snapshots();
+      FirebaseFirestore.instance.collection('spots').snapshots();
 
   final List<String> genderItems = [
     'Male',
@@ -231,7 +231,7 @@ class _SelectSpotsScreenState extends State<SelectSpotsScreen> {
                                           left: 10, right: 30),
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        '${data.docs[index]['des']}',
+                                        '${data.docs[index]['description']}',
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 2,
                                         style: GoogleFonts.inter(
