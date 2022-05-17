@@ -6,8 +6,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
 
-  late GoogleSignInAccount _user;
-  GoogleSignInAccount get user => _user;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuth get auth => _auth;
+  late User? _user;
+  User? get user => _user;
 
   Future googleLogout() async {
     await googleSignIn.disconnect();
@@ -18,7 +20,6 @@ class AuthProvider extends ChangeNotifier {
     final googleUser = await googleSignIn.signIn();
 
     if (googleUser == null) return;
-    _user = googleUser;
 
     final googleAuth = await googleUser.authentication;
 
@@ -27,7 +28,8 @@ class AuthProvider extends ChangeNotifier {
       idToken: googleAuth.idToken,
     );
 
-    await FirebaseAuth.instance.signInWithCredential(credential);
+    final userCredential =await _auth.signInWithCredential(credential);
+    _user = userCredential.user;
     notifyListeners();
   }
 
@@ -38,7 +40,8 @@ class AuthProvider extends ChangeNotifier {
         case LoginStatus.success:
           final AuthCredential facebookCredential =
               FacebookAuthProvider.credential(result.accessToken!.token);
-          await FirebaseAuth.instance.signInWithCredential(facebookCredential);
+          final userCredential = await _auth.signInWithCredential(facebookCredential);
+          _user = userCredential.user;
           notifyListeners();
           return Resource(status: Status.success);
         case LoginStatus.cancelled:

@@ -66,7 +66,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '997576782837',
     projectId: 'touristop-dev-c1abf',
     storageBucket: 'touristop-dev-c1abf.appspot.com',
-    androidClientId: '997576782837-6oemb8n9d8lntq41fkeqa8dlisnadv59.apps.googleusercontent.com',
+    androidClientId: '997576782837-totp309itv4mbtu57bnk97n16nobljt2.apps.googleusercontent.com',
     iosClientId: '997576782837-kmc8nuclvraieru9ace9dmnd8pfhe1c3.apps.googleusercontent.com',
     iosBundleId: 'com.example.touristop',
   );
@@ -77,7 +77,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '997576782837',
     projectId: 'touristop-dev-c1abf',
     storageBucket: 'touristop-dev-c1abf.appspot.com',
-    androidClientId: '997576782837-6oemb8n9d8lntq41fkeqa8dlisnadv59.apps.googleusercontent.com',
+    androidClientId: '997576782837-totp309itv4mbtu57bnk97n16nobljt2.apps.googleusercontent.com',
     iosClientId: '997576782837-kmc8nuclvraieru9ace9dmnd8pfhe1c3.apps.googleusercontent.com',
     iosBundleId: 'com.example.touristop',
   );

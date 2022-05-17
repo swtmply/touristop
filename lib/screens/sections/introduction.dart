@@ -21,7 +21,7 @@ class OnBoardingPage extends StatelessWidget {
             titleWidget: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.only(left: 30, right: 30),
+                  padding: const EdgeInsets.only(left: 30, right: 30),
                   child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
@@ -31,13 +31,13 @@ class OnBoardingPage extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                         children: <TextSpan>[
-                          TextSpan(text: 'Find the best '),
+                          const TextSpan(text: 'Find the best '),
                           TextSpan(
                               text: 'Tourist Spot ',
                               style: GoogleFonts.neucha(
-                                color: Color.fromRGBO(43, 193, 157, 1),
+                                color: const Color.fromRGBO(43, 193, 157, 1),
                               )),
-                          TextSpan(text: 'yourself'),
+                          const TextSpan(text: 'yourself'),
                         ],
                       )),
                 ),
@@ -45,7 +45,7 @@ class OnBoardingPage extends StatelessWidget {
             ),
             body: "Easily locate tourist spots near you.",
             image: Container(
-              padding: EdgeInsets.only(top: 30),
+              padding: const EdgeInsets.only(top: 30),
               width: size.width,
               child: buildImage('assets/images/look.png'),
             ),
@@ -54,7 +54,7 @@ class OnBoardingPage extends StatelessWidget {
             titleWidget: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.only(left: 30, right: 30),
+                  padding: const EdgeInsets.only(left: 30, right: 30),
                   child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
@@ -64,11 +64,11 @@ class OnBoardingPage extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                         children: <TextSpan>[
-                          TextSpan(text: 'Travel all over '),
+                          const TextSpan(text: 'Travel all over '),
                           TextSpan(
                               text: 'Manila ',
                               style: GoogleFonts.neucha(
-                                color: Color.fromRGBO(49, 64, 195, 1),
+                                color: const Color.fromRGBO(49, 64, 195, 1),
                               )),
                         ],
                       )),
@@ -76,7 +76,7 @@ class OnBoardingPage extends StatelessWidget {
               ],
             ),
             bodyWidget: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 "Go to different places in Manila with our built-in navigation for you.",
                 style: GoogleFonts.roboto(
@@ -86,7 +86,7 @@ class OnBoardingPage extends StatelessWidget {
               ),
             ),
             image: Container(
-              padding: EdgeInsets.only(top: 30),
+              padding: const EdgeInsets.only(top: 30),
               width: size.width,
               child: buildImage('assets/images/Travels.png'),
             ),
@@ -95,7 +95,7 @@ class OnBoardingPage extends StatelessWidget {
             titleWidget: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.only(left: 30, right: 30),
+                  padding: const EdgeInsets.only(left: 30, right: 30),
                   child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
@@ -105,17 +105,17 @@ class OnBoardingPage extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                         children: <TextSpan>[
-                          TextSpan(text: 'Appreciate the '),
+                          const TextSpan(text: 'Appreciate the '),
                           TextSpan(
                               text: 'views  ',
                               style: GoogleFonts.neucha(
-                                color: Color.fromRGBO(43, 193, 157, 1),
+                                color: const Color.fromRGBO(43, 193, 157, 1),
                               )),
-                          TextSpan(text: 'and '),
+                          const TextSpan(text: 'and '),
                           TextSpan(
                               text: 'landmarks',
                               style: GoogleFonts.neucha(
-                                color: Color.fromRGBO(49, 64, 195, 1),
+                                color: const Color.fromRGBO(49, 64, 195, 1),
                               )),
                         ],
                       )),
@@ -123,7 +123,7 @@ class OnBoardingPage extends StatelessWidget {
               ],
             ),
             bodyWidget: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 "Go to different places in Manila with our built-in navigation for you.",
                 style: GoogleFonts.roboto(
@@ -133,7 +133,7 @@ class OnBoardingPage extends StatelessWidget {
               ),
             ),
             image: Container(
-              padding: EdgeInsets.only(top: 30),
+              padding: const EdgeInsets.only(top: 30),
               width: size.width,
               child: buildImage('assets/images/Victory.png'),
             ),
@@ -144,13 +144,9 @@ class OnBoardingPage extends StatelessWidget {
             style: GoogleFonts.inter(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Color.fromRGBO(49, 64, 195, 1))),
+                color: const Color.fromRGBO(49, 64, 195, 1))),
         onDone: () async {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-            (Route<dynamic> route) => false,
-          );
+          Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
         },
         next: Container(
           alignment: Alignment.bottomRight,
