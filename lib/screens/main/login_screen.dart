@@ -19,7 +19,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(
     BuildContext context,
   ) {
-    final auth = ref.watch(authProvider);
+    final fbAuth = ref.watch(authProvider);
 
     return Scaffold(
       body: Column(
@@ -27,8 +27,12 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
         children: <Widget>[
           Image.asset(
             "assets/images/login.png",
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.7,
+            scale: 0.5,
+            fit: BoxFit.fill,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 50),
           Container(
             padding: const EdgeInsets.only(left: 40, right: 40),
             width: double.infinity,
@@ -41,7 +45,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                 backgroundColor: const Color.fromRGBO(93, 107, 230, 1),
               ),
               onPressed: () async {
-                await auth.signInWithFacebook();
+                await fbAuth.signInWithFacebook();
               },
               child: Text(
                 'Login with Facebook',
@@ -65,7 +69,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                 backgroundColor: const Color.fromRGBO(93, 230, 197, 1),
               ),
               onPressed: () {
-                auth.googleLogin();
+                fbAuth.googleLogin();
               },
               child: Text(
                 'Login with Google',
