@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "997576782837-6oemb8n9d8lntq41fkeqa8dlisnadv59.apps.googleusercontent.com",
+          "client_id": "997576782837-totp309itv4mbtu57bnk97n16nobljt2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.touristop",
-            "certificate_hash": "23e9ae9b7b931e010bc6470da7622195948e9c67"
+            "certificate_hash": "620356e88b1b000bad10f3bad6ff86c3f2da0392"
           }
         },
         {
