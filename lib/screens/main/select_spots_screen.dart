@@ -1,18 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:touristop/main.dart';
+import 'package:touristop/models/tourist_spot_model.dart';
+import 'package:touristop/screens/sections/spot_information.dart';
 // import 'second_page.dart';
 
-class SelectSpotsScreen extends StatefulWidget {
+class SelectSpotsScreen extends ConsumerStatefulWidget {
+  const SelectSpotsScreen({Key? key}) : super(key: key);
+
   @override
-  _SelectSpotsScreenState createState() => _SelectSpotsScreenState();
+  SelectSpotsScreenState createState() => SelectSpotsScreenState();
 }
 
-class _SelectSpotsScreenState extends State<SelectSpotsScreen> {
+class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
   final Stream<QuerySnapshot> spots =
       FirebaseFirestore.instance.collection('spots').snapshots();
 
@@ -25,6 +31,7 @@ class _SelectSpotsScreenState extends State<SelectSpotsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final spot = ref.watch(spotsProvider);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SizedBox(
@@ -67,7 +74,7 @@ class _SelectSpotsScreenState extends State<SelectSpotsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         DropdownButtonFormField2(
-                          buttonDecoration: BoxDecoration(boxShadow: [
+                          buttonDecoration: const BoxDecoration(boxShadow: [
                             BoxShadow(
                               color: Colors.grey,
                               spreadRadius: 8,
@@ -86,7 +93,8 @@ class _SelectSpotsScreenState extends State<SelectSpotsScreen> {
                                     style: GoogleFonts.inter(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w600,
-                                      color: Color.fromARGB(255, 146, 146, 146),
+                                      color: const Color.fromARGB(
+                                          255, 146, 146, 146),
                                     ),
                                   ),
                                   Text(
@@ -160,118 +168,136 @@ class _SelectSpotsScreenState extends State<SelectSpotsScreen> {
                     child: ListView.builder(
                       itemCount: data.size,
                       itemBuilder: (context, index) {
-                        return Stack(
-                          children: <Widget>[
-                            Container(
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              width: double.infinity,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                      '${data.docs[index]['image']}'),
-                                  fit: BoxFit.cover,
-                                  colorFilter: ColorFilter.mode(
-                                      Color.fromARGB(255, 0, 0, 0)
+                        return InkWell(
+                          onTap: () {
+                            spot.setSelectedSpot(TouristSpot(
+                              name: data.docs[index]['name'].toString(),
+                              description: data.docs[index]['description'].toString(),
+                              image: data.docs[index]['image'].toString()
+                            ));
+                            Navigator.pushNamed(context, '/selected-spot');
+                          },
+                          child: Stack(
+                            children: <Widget>[
+                              Container(
+                                margin:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                width: double.infinity,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        '${data.docs[index]['image']}'),
+                                    fit: BoxFit.cover,
+                                    colorFilter: ColorFilter.mode(
+                                      const Color.fromARGB(255, 0, 0, 0)
                                           .withOpacity(0.6),
-                                      BlendMode.darken),
+                                      BlendMode.darken,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              child: Container(
-                                padding: EdgeInsets.only(bottom: 20),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10),
-                                          alignment: Alignment.centerLeft,
-                                          child: Container(
-                                            width: size.width * 0.5,
-                                            child: Text(
-                                              '${data.docs[index]['name']}',
-                                              overflow: TextOverflow.clip,
-                                              maxLines: 1,
-                                              style: GoogleFonts.inter(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 22),
+                                child: Container(
+                                  padding: const EdgeInsets.only(bottom: 20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            alignment: Alignment.centerLeft,
+                                            child: Container(
+                                              width: size.width * 0.5,
+                                              child: Text(
+                                                '${data.docs[index]['name']}',
+                                                overflow: TextOverflow.clip,
+                                                maxLines: 1,
+                                                style: GoogleFonts.inter(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 22),
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Container(
-                                          alignment: Alignment.topLeft,
-                                          padding: EdgeInsets.only(
-                                              left: 15, top: 10),
-                                          child: RatingBar.builder(
-                                            initialRating: 5,
-                                            minRating: 1,
-                                            direction: Axis.horizontal,
-                                            allowHalfRating: true,
-                                            itemCount: 5,
-                                            itemSize: 25,
-                                            itemPadding: EdgeInsets.symmetric(
-                                                horizontal: 2),
-                                            itemBuilder: (context, _) => Icon(
-                                                Icons.star,
-                                                color: Color.fromRGBO(
-                                                    255, 239, 100, 1)),
-                                            onRatingUpdate: (rating) {
-                                              print(rating);
-                                            },
+                                          Container(
+                                            alignment: Alignment.topLeft,
+                                            padding: const EdgeInsets.only(
+                                                left: 15, top: 10),
+                                            child: RatingBar.builder(
+                                              initialRating: 5,
+                                              minRating: 1,
+                                              direction: Axis.horizontal,
+                                              allowHalfRating: true,
+                                              itemCount: 5,
+                                              itemSize: 25,
+                                              itemPadding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 2),
+                                              itemBuilder: (context, _) =>
+                                                  const Icon(Icons.star,
+                                                      color: Color.fromRGBO(
+                                                          255, 239, 100, 1)),
+                                              onRatingUpdate: (rating) {
+                                                print(rating);
+                                              },
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Container(
-                                      padding: const EdgeInsets.only(
-                                          left: 10, right: 30),
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '${data.docs[index]['description']}',
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                        style: GoogleFonts.inter(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 16),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 20, right: 20),
-                              child: Align(
-                                alignment: Alignment.topRight,
-                                child: RoundCheckBox(
-                                  onTap: (selected) {
-                                    // Navigator.pushAndRemoveUntil(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //       builder: (context) => PinScreen()),
-                                    //   (Route<dynamic> route) => false,
-                                    // );
-                                  },
-                                  size: 25,
-                                  checkedColor: Colors.transparent,
-                                  uncheckedColor: Colors.transparent,
-                                  border: Border.all(
-                                    width: 3,
-                                    color: Colors.white,
+                                      const SizedBox(height: 10),
+                                      Container(
+                                        padding: const EdgeInsets.only(
+                                            left: 10, right: 30),
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          '${data.docs[index]['description']}',
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 2,
+                                          style: GoogleFonts.inter(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  checkedWidget: Container(
-                                      padding: EdgeInsets.all(2),
-                                      child: FaIcon(FontAwesomeIcons.check,
-                                          color: Colors.white, size: 16)),
                                 ),
                               ),
-                            ),
-                          ],
+                              Container(
+                                padding:
+                                    const EdgeInsets.only(top: 20, right: 20),
+                                child: Align(
+                                  alignment: Alignment.topRight,
+                                  child: RoundCheckBox(
+                                    onTap: (selected) {
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SpotInformation(),
+                                        ),
+                                        (Route<dynamic> route) => false,
+                                      );
+                                    },
+                                    size: 25,
+                                    checkedColor: Colors.transparent,
+                                    uncheckedColor: Colors.transparent,
+                                    border: Border.all(
+                                      width: 3,
+                                      color: Colors.white,
+                                    ),
+                                    checkedWidget: Container(
+                                        padding: const EdgeInsets.all(2),
+                                        child: const FaIcon(
+                                            FontAwesomeIcons.check,
+                                            color: Colors.white,
+                                            size: 16)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                       },
                     ),

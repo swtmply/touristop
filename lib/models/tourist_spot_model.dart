@@ -1,5 +1,7 @@
 class TouristSpot {
   String? name;
+  String? description;
+  String? image;
 
-  TouristSpot({this.name});
+  TouristSpot({this.name, this.description, this.image});
 }
