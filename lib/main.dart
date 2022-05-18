@@ -1,28 +1,36 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:touristop/firebase/auth/auth_provider.dart';
 import 'package:touristop/firebase_options.dart';
+import 'package:touristop/models/tourist_spot_model.dart';
 import 'package:touristop/models/user_location_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
+import 'package:touristop/providers/selected_spot_provider.dart';
 import 'package:touristop/providers/user_location_provider.dart';
 import 'package:touristop/screens/main/calendar/calendar_screen.dart';
 import 'package:touristop/screens/main/enable_location_screen.dart';
 import 'package:touristop/screens/main/login_screen.dart';
 import 'package:touristop/screens/main/map_screen.dart';
-import 'package:touristop/screens/sections/introduction.dart';
+import 'package:touristop/screens/sections/spot_information.dart';
 import 'screens/main/select_spots_screen.dart';
 
 final userLocationProvider =
     StateNotifierProvider<UserLocationProvider, UserLocation>(
-        (ref) => UserLocationProvider());
+  (ref) => UserLocationProvider(),
+);
 
-final datesProvider =
-    ChangeNotifierProvider<DatesProvider>((ref) => DatesProvider());
+final datesProvider = ChangeNotifierProvider<DatesProvider>(
+  (ref) => DatesProvider(),
+);
 
-final authProvider =
-    ChangeNotifierProvider<AuthProvider>((ref) => AuthProvider());
+final authProvider = ChangeNotifierProvider<AuthProvider>(
+  (ref) => AuthProvider(),
+);
+
+final spotsProvider = ChangeNotifierProvider<SelectedSpotProvider>(
+  (ref) => SelectedSpotProvider(),
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,15 +56,14 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.pink,
-        scaffoldBackgroundColor: Colors.white
-      ),
+          primarySwatch: Colors.pink, scaffoldBackgroundColor: Colors.white),
       routes: {
         '/enable-location': (context) => const EnableLocationScreen(),
         '/map': (context) => const MapScreen(),
         '/calendar': (context) => const CalendarScreen(),
         '/select-spots': (context) => SelectSpotsScreen(),
-        '/login':(context) => const LoginScreen()
+        '/selected-spot': (context) => const SpotInformation(),
+        '/login': (context) => const LoginScreen()
       },
       home: Scaffold(
         body: SafeArea(
@@ -64,11 +71,11 @@ class MyApp extends ConsumerWidget {
             stream: fbAuth.auth.authStateChanges(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child:  CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasData) {
                 return const EnableLocationScreen();
               } else if (snapshot.hasError) {
-                return const Center(child:  Text('Something went wrong'));
+                return const Center(child: Text('Something went wrong'));
               } else {
                 return const LoginScreen();
               }
