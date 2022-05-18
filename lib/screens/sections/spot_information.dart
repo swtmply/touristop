@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:touristop/main.dart';
-import 'package:touristop/screens/main/select_spots_screen.dart';
+import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
 
 class SpotInformation extends ConsumerWidget {
   const SpotInformation({Key? key}) : super(key: key);

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:touristop/firebase/auth/auth_provider.dart';
 import 'package:touristop/firebase_options.dart';
-import 'package:touristop/models/tourist_spot_model.dart';
 import 'package:touristop/models/user_location_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_spot_provider.dart';
@@ -13,7 +12,7 @@ import 'package:touristop/screens/main/enable_location_screen.dart';
 import 'package:touristop/screens/main/login_screen.dart';
 import 'package:touristop/screens/main/map_screen.dart';
 import 'package:touristop/screens/sections/spot_information.dart';
-import 'screens/main/select_spots_screen.dart';
+import 'screens/main/select_spots/select_spots_screen.dart';
 
 final userLocationProvider =
     StateNotifierProvider<UserLocationProvider, UserLocation>(
@@ -61,7 +60,7 @@ class MyApp extends ConsumerWidget {
         '/enable-location': (context) => const EnableLocationScreen(),
         '/map': (context) => const MapScreen(),
         '/calendar': (context) => const CalendarScreen(),
-        '/select-spots': (context) => SelectSpotsScreen(),
+        '/select-spots': (context) => const SelectSpotsScreen(),
         '/selected-spot': (context) => const SpotInformation(),
         '/login': (context) => const LoginScreen()
       },
@@ -73,7 +72,7 @@ class MyApp extends ConsumerWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasData) {
-                return const EnableLocationScreen();
+                return const CalendarScreen();
               } else if (snapshot.hasError) {
                 return const Center(child: Text('Something went wrong'));
               } else {
