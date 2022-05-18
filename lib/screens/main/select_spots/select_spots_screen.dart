@@ -47,7 +47,7 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
             // ignore: todo
             // TODO filter by distance
             final docs = data.docs.where((doc) {
-              final docData = doc.data()! as Map<String, dynamic>;
+              final docData = doc.data() as Map<String, dynamic>;
               List<dynamic> docDates = docData['dates'] ?? [];
               final day = DateFormat('E').format(date);
 
