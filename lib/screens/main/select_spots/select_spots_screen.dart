@@ -18,7 +18,7 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
   final Stream<QuerySnapshot> spots =
       FirebaseFirestore.instance.collection('spots').snapshots();
 
-  String? selectedDate = 'Select Date';
+  DateTime? selectedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,21 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
 
             // filter docs with specific date
             final data = snapshot.requireData;
-            final docs = data.docs;
+            final date = selectedDate ?? dates.dates[0];
+
+            // ignore: todo
+            // TODO filter by distance
+            final docs = data.docs.where((doc) {
+              final docData = doc.data()! as Map<String, dynamic>;
+              List<dynamic> docDates = docData['dates'] ?? [];
+              final day = DateFormat('E').format(date);
+
+              for (var schedule in docDates) {
+                if (schedule['date'] == day) return true;
+              }
+
+              return false;
+            }).toList();
 
             return SafeArea(
               child: Column(
@@ -71,7 +85,7 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                           height: 40,
                         ),
                         AppDropdown(
-                          value: selectedDate.toString(),
+                          value: DateFormat('yMd').format(date),
                           hint: 'Select Date',
                           onChanged: (value) {
                             setState(() {
@@ -79,7 +93,10 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                             });
                           },
                           listItems: dates.dates.map((date) {
-                            return DateFormat.yMd().format(date).toString();
+                            return {
+                              'value': date,
+                              'text': DateFormat('yMd').format(date)
+                            };
                           }).toList(),
                         ),
                         const SizedBox(
