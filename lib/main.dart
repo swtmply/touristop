@@ -84,7 +84,7 @@ class MyApp extends ConsumerWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasData) {
-                return const CalendarScreen();
+                return const EnableLocationScreen();
               } else if (snapshot.hasError) {
                 return const Center(child: Text('Something went wrong'));
               } else {

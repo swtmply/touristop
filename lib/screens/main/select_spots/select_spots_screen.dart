@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:touristop/boxes/spots_box.dart';
 import 'package:touristop/main.dart';
 import 'package:touristop/models/tourist_spot_model.dart';
 import 'package:touristop/screens/main/select_spots/widgets/app_dropdown.dart';
@@ -23,6 +26,7 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
   @override
   Widget build(BuildContext context) {
     final dates = ref.watch(datesProvider);
+    final location = ref.watch(userLocationProvider);
 
     return Scaffold(
       body: SizedBox(
@@ -40,23 +44,47 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
               );
             }
 
-            // filter docs with specific date
             final data = snapshot.requireData;
             final date = selectedDate ?? dates.dates[0];
 
-            // ignore: todo
-            // TODO filter by distance
-            final docs = data.docs.where((doc) {
-              final docData = doc.data() as Map<String, dynamic>;
-              List<dynamic> docDates = docData['dates'] ?? [];
-              final day = DateFormat('E').format(date);
+            // filter by date
+            final docsFilteredByDate = data.docs
+                .map((doc) {
+                  final docData = doc.data() as Map<String, dynamic>;
+                  final docPosition = doc.get('position');
+                  double distanceFromUser = Geolocator.distanceBetween(
+                        docPosition.latitude,
+                        docPosition.longitude,
+                        location.userPosition!.latitude,
+                        location.userPosition!.longitude,
+                      ) /
+                      1000;
 
-              for (var schedule in docDates) {
-                if (schedule['date'] == day) return true;
-              }
+                  final spot = TouristSpot(
+                    name: docData['name'],
+                    description: docData['description'],
+                    image: docData['image'],
+                    dates: docData['dates'],
+                    position: docPosition,
+                    distanceFromUser: distanceFromUser,
+                  );
 
-              return false;
-            }).toList();
+                  return spot;
+                })
+                .toList()
+                .where((doc) {
+                  final day = DateFormat('E').format(date);
+
+                  for (var schedule in doc.dates ?? []) {
+                    if (schedule['date'] == day) return true;
+                  }
+
+                  return false;
+                })
+                .toList();
+
+            docsFilteredByDate.sort(
+                (a, b) => a.distanceFromUser! < b.distanceFromUser! ? 1 : 0);
 
             return SafeArea(
               child: Column(
@@ -108,13 +136,13 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                   Expanded(
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
-                      itemCount: docs.length,
+                      itemCount: docsFilteredByDate.length,
                       itemBuilder: (context, index) {
                         return SpotListItem(
                           spot: TouristSpot(
-                            name: docs[index]['name'],
-                            description: docs[index]['description'],
-                            image: docs[index]['image'],
+                            name: docsFilteredByDate[index].name,
+                            description: docsFilteredByDate[index].description,
+                            image: docsFilteredByDate[index].image,
                           ),
                         );
                       },
