@@ -15,7 +15,13 @@ class SpotsFirestore {
     return snapshot.docs.map((DocumentSnapshot document) {
       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
-      return TouristSpot()..name = data['name'];
+      return TouristSpot(
+          name: data['name'],
+          description: data['description'],
+          image: data['image'],
+          distanceFromUser: 0,
+          position: data['position'],
+          dates: data['dates']);
     }).toList();
   }
 }

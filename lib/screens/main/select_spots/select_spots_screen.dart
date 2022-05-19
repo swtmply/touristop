@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:touristop/boxes/spots_box.dart';
 import 'package:touristop/main.dart';
+import 'package:touristop/models/geopoint.dart' as app;
 import 'package:touristop/models/tourist_spot_model.dart';
 import 'package:touristop/screens/main/select_spots/widgets/app_dropdown.dart';
 import 'package:touristop/screens/main/select_spots/widgets/spot_list_item.dart';
@@ -27,6 +30,8 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
   Widget build(BuildContext context) {
     final dates = ref.watch(datesProvider);
     final location = ref.watch(userLocationProvider);
+
+    final spotBox = Hive.box<SpotBox>('spots');
 
     return Scaffold(
       body: SizedBox(
@@ -60,12 +65,16 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                       ) /
                       1000;
 
+                  final position = app.GeoPoint()
+                    ..latitude = docPosition.latitude
+                    ..longitude = docPosition.longitude;
+
                   final spot = TouristSpot(
                     name: docData['name'],
                     description: docData['description'],
                     image: docData['image'],
                     dates: docData['dates'],
-                    position: docPosition,
+                    position: position,
                     distanceFromUser: distanceFromUser,
                   );
 
@@ -139,11 +148,8 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                       itemCount: docsFilteredByDate.length,
                       itemBuilder: (context, index) {
                         return SpotListItem(
-                          spot: TouristSpot(
-                            name: docsFilteredByDate[index].name,
-                            description: docsFilteredByDate[index].description,
-                            image: docsFilteredByDate[index].image,
-                          ),
+                          selectedDate: date,
+                          spot: docsFilteredByDate[index],
                         );
                       },
                     ),

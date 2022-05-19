@@ -5,12 +5,8 @@ import 'package:touristop/models/tourist_spot_model.dart';
 
 class SelectedSpotsProvider extends ChangeNotifier {
   TouristSpot? _spot;
-  List<SpotBox>? _spots;
 
   TouristSpot? get spot => _spot;
-  List<SpotBox>? get spots => _spots;
-
-  final box = Hive.box<SpotBox>('spots');
 
   void setSelectedSpot(TouristSpot selectedSpot) {
     _spot = selectedSpot;
@@ -18,16 +14,22 @@ class SelectedSpotsProvider extends ChangeNotifier {
   }
 
   Future<void> addSpot(SpotBox spot) async {
+    final box = await Hive.openBox<SpotBox>('spots');
+
     box.add(spot);
     notifyListeners();
   }
 
-  updateItem(int index, SpotBox spot) {
+  updateItem(int index, SpotBox spot) async {
+    final box = await Hive.openBox<SpotBox>('spots');
+
     box.putAt(index, spot);
     notifyListeners();
   }
 
-  deleteItem(int index) {
+  deleteItem(int index) async {
+    final box = await Hive.openBox<SpotBox>('spots');
+
     box.deleteAt(index);
     notifyListeners();
   }
