@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,7 +36,7 @@ class SpotListItem extends ConsumerWidget {
             height: 150,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage('${spot.image}'),
+                image: NetworkImage(spot.image),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
                   const Color.fromARGB(255, 0, 0, 0).withOpacity(0.6),
@@ -52,10 +54,10 @@ class SpotListItem extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         alignment: Alignment.centerLeft,
-                        child: Container(
+                        child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.5,
                           child: Text(
-                            '${spot.name}',
+                            spot.name,
                             overflow: TextOverflow.clip,
                             maxLines: 1,
                             style: GoogleFonts.inter(
@@ -80,7 +82,7 @@ class SpotListItem extends ConsumerWidget {
                           itemBuilder: (context, _) => const Icon(Icons.star,
                               color: Color.fromRGBO(255, 239, 100, 1)),
                           onRatingUpdate: (rating) {
-                            print(rating);
+                            inspect(rating);
                           },
                         ),
                       ),
@@ -91,7 +93,7 @@ class SpotListItem extends ConsumerWidget {
                     padding: const EdgeInsets.only(left: 10, right: 30),
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      '${spot.description}',
+                      spot.description,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style: GoogleFonts.inter(

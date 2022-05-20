@@ -89,7 +89,7 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                 .toList();
 
             docsFilteredByDate.sort(
-                (a, b) => a.distanceFromUser! < b.distanceFromUser! ? 1 : 0);
+                (a, b) => a.distanceFromUser < b.distanceFromUser ? 1 : 0);
 
             return SafeArea(
               child: Column(

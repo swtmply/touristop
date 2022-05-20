@@ -74,8 +74,8 @@ class AuthProvider extends ChangeNotifier {
         default:
           return null;
       }
-    } on FirebaseAuthException catch (e) {
-      throw e;
+    } on FirebaseAuthException catch (_) {
+      rethrow;
     }
   }
 }

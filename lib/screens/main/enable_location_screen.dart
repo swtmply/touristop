@@ -52,6 +52,7 @@ class EnableLocationScreenState extends ConsumerState<EnableLocationScreen> {
               data.userPosition = await _determinePosition();
 
               if (data.userPosition != null) {
+                // ignore: use_build_context_synchronously
                 Navigator.pushNamed(context, '/calendar');
               }
             },

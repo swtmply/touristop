@@ -31,7 +31,7 @@ class CalendarScreenState extends ConsumerState<CalendarScreen> {
                   : () {
                       Navigator.pushNamed(context, '/select-spots');
                     },
-              child: Text('Submit'),
+              child: const Text('Submit'),
             )
           ],
         ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -126,9 +128,9 @@ class SpotInformation extends ConsumerWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: RichText(
                       textAlign: TextAlign.justify,
                       text: TextSpan(
@@ -142,7 +144,7 @@ class SpotInformation extends ConsumerWidget {
                           TextSpan(
                               text: selected.spot!.fee.toString(),
                               style: GoogleFonts.inter(
-                                color: Color.fromARGB(255, 18, 18, 18),
+                                color: const Color.fromARGB(255, 18, 18, 18),
                                 fontSize: 12,
                               )),
                         ],
@@ -159,30 +161,27 @@ class SpotInformation extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                      child: SizedBox.fromSize(
-                        size: const Size(86, 56),
-                        child: Material(
-                          child: InkWell(
-                            onTap: () {},
-                            child: Column(
-                              // mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                const Icon(
-                                  Icons.location_on_outlined,
-                                  color: Color.fromRGBO(130, 130, 130, 1),
-                                  size: 30,
+                    SizedBox.fromSize(
+                      size: const Size(86, 56),
+                      child: Material(
+                        child: InkWell(
+                          onTap: () {},
+                          child: Column(
+                            // mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              const Icon(
+                                Icons.location_on_outlined,
+                                color: Color.fromRGBO(130, 130, 130, 1),
+                                size: 30,
+                              ),
+                              Text(
+                                "Pin to Map",
+                                style: GoogleFonts.inter(
+                                  fontSize: 16,
+                                  color: const Color.fromRGBO(130, 130, 130, 1),
                                 ),
-                                Text(
-                                  "Pin to Map",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 16,
-                                    color:
-                                        const Color.fromRGBO(130, 130, 130, 1),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -216,39 +215,35 @@ class SpotInformation extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    Container(
-                      child: SizedBox.fromSize(
-                        size: const Size(86, 56),
-                        child: Material(
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const SpotReviewsScreen(),
-                                ),
-                                (Route<dynamic> route) => false,
-                              );
-                            },
-                            child: Column(
-                              // mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                const Icon(
-                                  Icons.reviews_outlined,
+                    SizedBox.fromSize(
+                      size: const Size(86, 56),
+                      child: Material(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SpotReviewsScreen(),
+                              ),
+                              (Route<dynamic> route) => false,
+                            );
+                          },
+                          child: Column(
+                            // mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              const Icon(
+                                Icons.reviews_outlined,
+                                color: Color.fromRGBO(130, 130, 130, 1),
+                                size: 30,
+                              ),
+                              Text(
+                                "Reviews",
+                                style: GoogleFonts.inter(
+                                  fontSize: 16,
                                   color: const Color.fromRGBO(130, 130, 130, 1),
-                                  size: 30,
                                 ),
-                                Text(
-                                  "Reviews",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 16,
-                                    color:
-                                        const Color.fromRGBO(130, 130, 130, 1),
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -265,14 +260,15 @@ class SpotInformation extends ConsumerWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
                   child: Text(
-                    'Address: ' + selected.spot!.address.toString(),
+                    'Address: ${selected.spot!.address}',
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.w500,
-                      color: Color.fromARGB(255, 134, 134, 134),
+                      color: const Color.fromARGB(255, 134, 134, 134),
                     ),
                   ),
                 ),
@@ -305,7 +301,7 @@ class SpotInformation extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
+                                SizedBox(
                                   height: 200,
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -328,24 +324,21 @@ class SpotInformation extends ConsumerWidget {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  child: RatingBar.builder(
-                                    initialRating: 5,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemSize: 20,
-                                    itemPadding: const EdgeInsets.symmetric(
-                                        horizontal: 2),
-                                    itemBuilder: (context, _) => const Icon(
-                                        Icons.star,
-                                        color: const Color.fromRGBO(
-                                            255, 239, 100, 1)),
-                                    onRatingUpdate: (rating) {
-                                      print(rating);
-                                    },
-                                  ),
+                                RatingBar.builder(
+                                  initialRating: 5,
+                                  minRating: 1,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemSize: 20,
+                                  itemPadding:
+                                      const EdgeInsets.symmetric(horizontal: 2),
+                                  itemBuilder: (context, _) => const Icon(
+                                      Icons.star,
+                                      color: Color.fromRGBO(255, 239, 100, 1)),
+                                  onRatingUpdate: (rating) {
+                                    inspect(rating);
+                                  },
                                 ),
                               ],
                             ),
@@ -355,7 +348,7 @@ class SpotInformation extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
+                                SizedBox(
                                   height: 200,
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -378,24 +371,21 @@ class SpotInformation extends ConsumerWidget {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  child: RatingBar.builder(
-                                    initialRating: 5,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemSize: 20,
-                                    itemPadding: const EdgeInsets.symmetric(
-                                        horizontal: 2),
-                                    itemBuilder: (context, _) => const Icon(
-                                        Icons.star,
-                                        color: const Color.fromRGBO(
-                                            255, 239, 100, 1)),
-                                    onRatingUpdate: (rating) {
-                                      print(rating);
-                                    },
-                                  ),
+                                RatingBar.builder(
+                                  initialRating: 5,
+                                  minRating: 1,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemSize: 20,
+                                  itemPadding:
+                                      const EdgeInsets.symmetric(horizontal: 2),
+                                  itemBuilder: (context, _) => const Icon(
+                                      Icons.star,
+                                      color: Color.fromRGBO(255, 239, 100, 1)),
+                                  onRatingUpdate: (rating) {
+                                    inspect(rating);
+                                  },
                                 ),
                               ],
                             ),
@@ -405,7 +395,7 @@ class SpotInformation extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
+                                SizedBox(
                                   height: 200,
                                   child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -428,24 +418,21 @@ class SpotInformation extends ConsumerWidget {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  child: RatingBar.builder(
-                                    initialRating: 5,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemSize: 20,
-                                    itemPadding: const EdgeInsets.symmetric(
-                                        horizontal: 2),
-                                    itemBuilder: (context, _) => const Icon(
-                                        Icons.star,
-                                        color: const Color.fromRGBO(
-                                            255, 239, 100, 1)),
-                                    onRatingUpdate: (rating) {
-                                      print(rating);
-                                    },
-                                  ),
+                                RatingBar.builder(
+                                  initialRating: 5,
+                                  minRating: 1,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemSize: 20,
+                                  itemPadding:
+                                      const EdgeInsets.symmetric(horizontal: 2),
+                                  itemBuilder: (context, _) => const Icon(
+                                      Icons.star,
+                                      color: Color.fromRGBO(255, 239, 100, 1)),
+                                  onRatingUpdate: (rating) {
+                                    inspect(rating);
+                                  },
                                 ),
                               ],
                             ),

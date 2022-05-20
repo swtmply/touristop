@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,7 +23,7 @@ class SpotReviewsScreenState extends ConsumerState<SpotReviewsScreen> {
 
     final spotReviews =
         reviews.where('spot', isEqualTo: selected.spot!.name).get();
-    Size size = MediaQuery.of(context).size;
+
     final fbAuth = ref.watch(authProvider);
 
     return Scaffold(
@@ -70,12 +68,10 @@ class SpotReviewsScreenState extends ConsumerState<SpotReviewsScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          Container(
-            child: const Divider(
-              height: 20,
-              thickness: 2,
-              color: Color.fromRGBO(229, 229, 229, 1),
-            ),
+          const Divider(
+            height: 20,
+            thickness: 2,
+            color: Color.fromRGBO(229, 229, 229, 1),
           ),
           const SizedBox(height: 5),
           Container(
@@ -97,11 +93,11 @@ class SpotReviewsScreenState extends ConsumerState<SpotReviewsScreen> {
                         'comment': comment,
                         'user': fbAuth.user!.uid,
                         'spot': selected.spot!.name
-                      }).catchError(
-                          (error) => print('Failed to add comment: $error'));
+                      }).catchError((error) =>
+                          debugPrint('Failed to add comment: $error'));
                     },
                     icon: const Icon(Icons.send,
-                        color: const Color.fromRGBO(199, 199, 199, 1)),
+                        color: Color.fromRGBO(199, 199, 199, 1)),
                   ),
                 ),
                 onChanged: (value) {
@@ -119,7 +115,7 @@ class SpotReviewsScreenState extends ConsumerState<SpotReviewsScreen> {
             future: spotReviews,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator.adaptive();
+                return const CircularProgressIndicator.adaptive();
               }
 
               final data = snapshot.data as QuerySnapshot;
@@ -185,7 +181,7 @@ class SpotReviewsScreenState extends ConsumerState<SpotReviewsScreen> {
             onPressed: () {
               fbAuth.googleLogout();
             },
-            child: Text('Logout'),
+            child: const Text('Logout'),
           ),
         ]),
       ),

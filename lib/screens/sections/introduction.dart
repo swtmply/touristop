@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:touristop/screens/main/login_screen.dart';
-// import 'package:touriststap_capstone/Screens/homepage.dart';
-// import 'package:touriststap_capstone/Screens/loginscreen.dart';
-//import 'package:touriststap_capstone/home.dart';
 
 class OnBoardingPage extends StatelessWidget {
   const OnBoardingPage({Key? key}) : super(key: key);
@@ -146,7 +142,8 @@ class OnBoardingPage extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: const Color.fromRGBO(49, 64, 195, 1))),
         onDone: () async {
-          Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/login', (route) => false);
         },
         next: Container(
           alignment: Alignment.bottomRight,
