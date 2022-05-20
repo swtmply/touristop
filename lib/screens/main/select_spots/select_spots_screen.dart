@@ -98,6 +98,8 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                             name: docs[index]['name'],
                             description: docs[index]['description'],
                             image: docs[index]['image'],
+                            fee: docs[index]['fee'],
+                            address: docs[index]['address'],
                           ),
                         );
                       },

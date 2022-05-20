@@ -12,6 +12,8 @@ import 'package:touristop/screens/main/enable_location_screen.dart';
 import 'package:touristop/screens/main/login_screen.dart';
 import 'package:touristop/screens/main/map_screen.dart';
 import 'package:touristop/screens/sections/spot_information.dart';
+import 'package:touristop/screens/sections/spot_reviews.dart';
+import 'package:touristop/screens/tests/user_test_screen.dart';
 import 'screens/main/select_spots/select_spots_screen.dart';
 
 final userLocationProvider =
@@ -62,7 +64,8 @@ class MyApp extends ConsumerWidget {
         '/calendar': (context) => const CalendarScreen(),
         '/select-spots': (context) => const SelectSpotsScreen(),
         '/selected-spot': (context) => const SpotInformation(),
-        '/login': (context) => const LoginScreen()
+        '/login': (context) => const LoginScreen(),
+        '/spot-reviews': (context) => const SpotReviewsScreen(),
       },
       home: Scaffold(
         body: SafeArea(
@@ -72,7 +75,7 @@ class MyApp extends ConsumerWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasData) {
-                return const CalendarScreen();
+                return EnableLocationScreen();
               } else if (snapshot.hasError) {
                 return const Center(child: Text('Something went wrong'));
               } else {

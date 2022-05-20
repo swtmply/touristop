@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -8,7 +9,7 @@ class AuthProvider extends ChangeNotifier {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseAuth get auth => _auth;
-  late User? _user;
+  User? _user;
   User? get user => _user;
 
   Future googleLogout() async {
@@ -28,9 +29,30 @@ class AuthProvider extends ChangeNotifier {
       idToken: googleAuth.idToken,
     );
 
-    final userCredential =await _auth.signInWithCredential(credential);
+    final userCredential = await _auth.signInWithCredential(credential);
     _user = userCredential.user;
+
+    if (_user != null) {
+      final QuerySnapshot resultQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where(
+            'id',
+            isEqualTo: _user!.uid,
+          )
+          .get();
+      final List<DocumentSnapshot> documentSnapshots = resultQuery.docs;
+
+      if (documentSnapshots.isEmpty) {
+        FirebaseFirestore.instance.collection('users').doc(_user!.uid).set({
+          'user_ID': _user!.uid,
+          'email': _user!.email,
+          'photo': _user!.photoURL,
+          'name': _user!.displayName,
+        });
+      }
+    }
     notifyListeners();
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   Future<Resource?> signInWithFacebook() async {
@@ -40,7 +62,8 @@ class AuthProvider extends ChangeNotifier {
         case LoginStatus.success:
           final AuthCredential facebookCredential =
               FacebookAuthProvider.credential(result.accessToken!.token);
-          final userCredential = await _auth.signInWithCredential(facebookCredential);
+          final userCredential =
+              await _auth.signInWithCredential(facebookCredential);
           _user = userCredential.user;
           notifyListeners();
           return Resource(status: Status.success);
