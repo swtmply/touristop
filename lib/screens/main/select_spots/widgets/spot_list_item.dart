@@ -3,22 +3,26 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
+import 'package:touristop/boxes/spots_box.dart';
 import 'package:touristop/main.dart';
 import 'package:touristop/models/tourist_spot_model.dart';
-import 'package:touristop/screens/sections/spot_information.dart';
 
 class SpotListItem extends ConsumerWidget {
-  const SpotListItem({Key? key, required this.spot}) : super(key: key);
+  const SpotListItem({Key? key, required this.spot, required this.selectedDate})
+      : super(key: key);
   final TouristSpot spot;
+  final DateTime selectedDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final spotProvider = ref.watch(spotsProvider);
+    final selected = ref.watch(selectedSpots);
+    Box<SpotBox> spotBox = Hive.box<SpotBox>('spots');
 
     return InkWell(
       onTap: () {
-        spotProvider.setSelectedSpot(spot);
+        selected.setSelectedSpot(spot);
         Navigator.pushNamed(context, '/selected-spot');
       },
       child: Stack(
@@ -90,9 +94,10 @@ class SpotListItem extends ConsumerWidget {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ],
@@ -104,14 +109,18 @@ class SpotListItem extends ConsumerWidget {
             child: Align(
               alignment: Alignment.topRight,
               child: RoundCheckBox(
-                onTap: (selected) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SpotInformation(),
-                    ),
-                    (Route<dynamic> route) => false,
-                  );
+                isChecked: spotBox.containsKey(spot.name),
+                onTap: (selectedItem) {
+                  final spotItem = SpotBox()
+                    ..touristSpot = spot
+                    ..dateSelected = selectedDate
+                    ..isDone = false;
+
+                  if (selectedItem.toString() == 'true') {
+                    spotBox.put(spot.name, spotItem);
+                  } else {
+                    spotBox.delete(spot.name);
+                  }
                 },
                 size: 25,
                 checkedColor: Colors.transparent,

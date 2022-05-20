@@ -7,14 +7,14 @@ class AppDropdown extends StatelessWidget {
   const AppDropdown({
     Key? key,
     required this.onChanged,
-    this.value,
+    required this.value,
     required this.listItems,
     this.hint,
   }) : super(key: key);
 
   final Function onChanged;
-  final String? value;
-  final List<String> listItems;
+  final dynamic value;
+  final List<Map<dynamic, Object>> listItems;
   final String? hint;
 
   @override
@@ -82,18 +82,12 @@ class AppDropdown extends StatelessWidget {
         FontAwesomeIcons.sort,
         color: Colors.black45,
       ),
-      items: listItems
-          .map((item) => DropdownMenuItem<String>(
-                value: item,
-                child: Text(
-                  item,
-                  style: GoogleFonts.inter(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ))
-          .toList(),
+      items: listItems.map((item) {
+        return DropdownMenuItem(
+          value: item['value'],
+          child: Text(item['text'].toString()),
+        );
+      }).toList(),
       onChanged: (value) {
         onChanged(value);
       },

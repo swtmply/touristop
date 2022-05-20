@@ -12,7 +12,7 @@ class SpotInformation extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final spot = ref.watch(spotsProvider);
+    final selected = ref.watch(selectedSpots);
 
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -27,7 +27,7 @@ class SpotInformation extends ConsumerWidget {
                     image: DecorationImage(
                       fit: BoxFit.fill,
                       image: NetworkImage(
-                        '${spot.spot?.image.toString()}',
+                        '${selected.spot?.image.toString()}',
                       ),
                     ),
                   ),
@@ -69,7 +69,7 @@ class SpotInformation extends ConsumerWidget {
                   padding: const EdgeInsets.fromLTRB(20, 20, 0, 5),
                   alignment: Alignment.topLeft,
                   child: Text(
-                    spot.spot!.name.toString(),
+                    selected.spot!.name.toString(),
                     style: GoogleFonts.inter(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -278,7 +278,7 @@ class SpotInformation extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    spot.spot!.description.toString(),
+                    selected.spot!.description.toString(),
                     style: GoogleFonts.inter(
                       fontWeight: FontWeight.w400,
                       fontSize: 15,

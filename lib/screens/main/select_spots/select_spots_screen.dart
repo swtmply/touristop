@@ -1,8 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:touristop/boxes/spots_box.dart';
 import 'package:touristop/main.dart';
+import 'package:touristop/models/geopoint.dart' as app;
 import 'package:touristop/models/tourist_spot_model.dart';
 import 'package:touristop/screens/main/select_spots/widgets/app_dropdown.dart';
 import 'package:touristop/screens/main/select_spots/widgets/spot_list_item.dart';
@@ -18,11 +24,14 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
   final Stream<QuerySnapshot> spots =
       FirebaseFirestore.instance.collection('spots').snapshots();
 
-  String? selectedDate = 'Select Date';
+  DateTime? selectedDate;
 
   @override
   Widget build(BuildContext context) {
     final dates = ref.watch(datesProvider);
+    final location = ref.watch(userLocationProvider);
+
+    final spotBox = Hive.box<SpotBox>('spots');
 
     return Scaffold(
       body: SizedBox(
@@ -40,9 +49,51 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
               );
             }
 
-            // filter docs with specific date
             final data = snapshot.requireData;
-            final docs = data.docs;
+            final date = selectedDate ?? dates.dates[0];
+
+            // filter by date
+            final docsFilteredByDate = data.docs
+                .map((doc) {
+                  final docData = doc.data() as Map<String, dynamic>;
+                  final docPosition = doc.get('position');
+                  double distanceFromUser = Geolocator.distanceBetween(
+                        docPosition.latitude,
+                        docPosition.longitude,
+                        location.userPosition!.latitude,
+                        location.userPosition!.longitude,
+                      ) /
+                      1000;
+
+                  final position = app.GeoPoint()
+                    ..latitude = docPosition.latitude
+                    ..longitude = docPosition.longitude;
+
+                  final spot = TouristSpot(
+                    name: docData['name'],
+                    description: docData['description'],
+                    image: docData['image'],
+                    dates: docData['dates'],
+                    position: position,
+                    distanceFromUser: distanceFromUser,
+                  );
+
+                  return spot;
+                })
+                .toList()
+                .where((doc) {
+                  final day = DateFormat('E').format(date);
+
+                  for (var schedule in doc.dates ?? []) {
+                    if (schedule['date'] == day) return true;
+                  }
+
+                  return false;
+                })
+                .toList();
+
+            docsFilteredByDate.sort(
+                (a, b) => a.distanceFromUser! < b.distanceFromUser! ? 1 : 0);
 
             return SafeArea(
               child: Column(
@@ -71,7 +122,7 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                           height: 40,
                         ),
                         AppDropdown(
-                          value: selectedDate.toString(),
+                          value: DateFormat('yMd').format(date),
                           hint: 'Select Date',
                           onChanged: (value) {
                             setState(() {
@@ -79,7 +130,10 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                             });
                           },
                           listItems: dates.dates.map((date) {
-                            return DateFormat.yMd().format(date).toString();
+                            return {
+                              'value': date,
+                              'text': DateFormat('yMd').format(date)
+                            };
                           }).toList(),
                         ),
                         const SizedBox(
@@ -91,16 +145,11 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                   Expanded(
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
-                      itemCount: docs.length,
+                      itemCount: docsFilteredByDate.length,
                       itemBuilder: (context, index) {
                         return SpotListItem(
-                          spot: TouristSpot(
-                            name: docs[index]['name'],
-                            description: docs[index]['description'],
-                            image: docs[index]['image'],
-                            fee: docs[index]['fee'],
-                            address: docs[index]['address'],
-                          ),
+                          selectedDate: date,
+                          spot: docsFilteredByDate[index],
                         );
                       },
                     ),
