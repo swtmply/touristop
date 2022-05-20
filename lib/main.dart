@@ -19,7 +19,6 @@ import 'package:touristop/screens/main/login_screen.dart';
 import 'package:touristop/screens/main/map_screen.dart';
 import 'package:touristop/screens/sections/spot_information.dart';
 import 'package:touristop/screens/sections/spot_reviews.dart';
-import 'package:touristop/screens/tests/user_test_screen.dart';
 import 'screens/main/select_spots/select_spots_screen.dart';
 
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -37,7 +36,7 @@ final authProvider = ChangeNotifierProvider<AuthProvider>(
   (ref) => AuthProvider(),
 );
 
-final selectedSpots = ChangeNotifierProvider<SelectedSpotsProvider>(
+final spotsProvider = ChangeNotifierProvider<SelectedSpotsProvider>(
   (ref) => SelectedSpotsProvider(),
 );
 
@@ -55,7 +54,7 @@ Future main() async {
   Hive.registerAdapter(TouristSpotAdapter());
   Hive.registerAdapter(GeoPointAdapter());
 
-  await Hive.openBox<SpotBox>('spots');
+  await Hive.openBox<SpotBox>("spots");
 
   runApp(
     const ProviderScope(

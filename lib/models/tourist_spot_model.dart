@@ -1,4 +1,3 @@
-
 import 'package:hive/hive.dart';
 import 'package:touristop/models/geopoint.dart';
 
@@ -18,12 +17,19 @@ class TouristSpot extends HiveObject {
   late GeoPoint position;
   @HiveField(5)
   late double distanceFromUser;
+  @HiveField(6)
+  late String fee;
+  @HiveField(7)
+  late String address;
 
-  TouristSpot(
-      {required this.name,
-      required this.description,
-      required this.image,
-      this.dates,
-      required this.position,
-      required this.distanceFromUser});
+  TouristSpot({
+    required this.name,
+    required this.description,
+    required this.image,
+    this.dates,
+    required this.position,
+    required this.distanceFromUser,
+    required this.address,
+    required this.fee,
+  });
 }

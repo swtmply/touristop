@@ -12,7 +12,7 @@ class SpotInformation extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selected = ref.watch(selectedSpots);
+    final selected = ref.watch(spotsProvider);
 
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -127,28 +127,27 @@ class SpotInformation extends ConsumerWidget {
                   ),
                 ),
                 SizedBox(height: 5),
-                 Container(
-                   padding: EdgeInsets.symmetric(horizontal: 20),
-                   child: RichText(
-                            textAlign: TextAlign.justify,
-                            text: TextSpan(
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: RichText(
+                      textAlign: TextAlign.justify,
+                      text: TextSpan(
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        children: <TextSpan>[
+                          const TextSpan(text: 'Entrance Fee: '),
+                          TextSpan(
+                              text: selected.spot!.fee.toString(),
                               style: GoogleFonts.inter(
-                                fontSize: 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              children: <TextSpan>[
-                                const TextSpan(text: 'Entrance Fee: '),
-                                TextSpan(
-                                    text: spot.spot!.fee.toString(),
-                                    style: GoogleFonts.inter(
-                                      color:
-                                          Color.fromARGB(255, 18, 18, 18),
-                                      fontSize: 12,
-                                    )),
-                              ],
-                            )),
-                 ),
+                                color: Color.fromARGB(255, 18, 18, 18),
+                                fontSize: 12,
+                              )),
+                        ],
+                      )),
+                ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Divider(
@@ -223,13 +222,14 @@ class SpotInformation extends ConsumerWidget {
                         child: Material(
                           child: InkWell(
                             onTap: () {
-                               Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SpotReviewsScreen(),
-                              ),
-                              (Route<dynamic> route) => false,
-                            );
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SpotReviewsScreen(),
+                                ),
+                                (Route<dynamic> route) => false,
+                              );
                             },
                             child: Column(
                               // mainAxisAlignment: MainAxisAlignment.center,
@@ -264,16 +264,17 @@ class SpotInformation extends ConsumerWidget {
                     color: Colors.grey[300],
                   ),
                 ),
-                
-                 Container(
+                Container(
                   padding: EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-                  child: Text('Address: ' + spot.spot!.address.toString(),
-                  style: GoogleFonts.inter(
-                    fontSize: 16,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w500,
-                    color: Color.fromARGB(255, 134, 134, 134),
-                  ),),
+                  child: Text(
+                    'Address: ' + selected.spot!.address.toString(),
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
+                      color: Color.fromARGB(255, 134, 134, 134),
+                    ),
+                  ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),

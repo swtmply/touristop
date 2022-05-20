@@ -23,13 +23,15 @@ class TouristSpotAdapter extends TypeAdapter<TouristSpot> {
       dates: (fields[3] as List?)?.cast<dynamic>(),
       position: fields[4] as GeoPoint,
       distanceFromUser: fields[5] as double,
+      address: fields[7] as String,
+      fee: fields[6] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, TouristSpot obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -41,7 +43,11 @@ class TouristSpotAdapter extends TypeAdapter<TouristSpot> {
       ..writeByte(4)
       ..write(obj.position)
       ..writeByte(5)
-      ..write(obj.distanceFromUser);
+      ..write(obj.distanceFromUser)
+      ..writeByte(6)
+      ..write(obj.fee)
+      ..writeByte(7)
+      ..write(obj.address);
   }
 
   @override

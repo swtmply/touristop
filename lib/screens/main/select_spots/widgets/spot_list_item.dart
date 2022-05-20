@@ -10,15 +10,16 @@ import 'package:touristop/main.dart';
 import 'package:touristop/models/tourist_spot_model.dart';
 
 class SpotListItem extends ConsumerWidget {
-  const SpotListItem({Key? key, required this.spot, required this.selectedDate})
+  SpotListItem({Key? key, required this.spot, required this.selectedDate})
       : super(key: key);
   final TouristSpot spot;
   final DateTime selectedDate;
 
+  final spotBox = Hive.box<SpotBox>('spots');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selected = ref.watch(selectedSpots);
-    Box<SpotBox> spotBox = Hive.box<SpotBox>('spots');
+    final selected = ref.watch(spotsProvider);
 
     return InkWell(
       onTap: () {

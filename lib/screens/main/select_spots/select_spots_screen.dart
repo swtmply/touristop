@@ -2,11 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:touristop/boxes/spots_box.dart';
 import 'package:touristop/main.dart';
 import 'package:touristop/models/geopoint.dart' as app;
 import 'package:touristop/models/tourist_spot_model.dart';
@@ -30,8 +26,6 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
   Widget build(BuildContext context) {
     final dates = ref.watch(datesProvider);
     final location = ref.watch(userLocationProvider);
-
-    final spotBox = Hive.box<SpotBox>('spots');
 
     return Scaffold(
       body: SizedBox(
@@ -76,6 +70,8 @@ class SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                     dates: docData['dates'],
                     position: position,
                     distanceFromUser: distanceFromUser,
+                    address: docData['address'],
+                    fee: docData['fee'],
                   );
 
                   return spot;
