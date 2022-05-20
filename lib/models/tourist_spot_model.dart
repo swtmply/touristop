@@ -1,3 +1,4 @@
+
 import 'package:hive/hive.dart';
 import 'package:touristop/models/geopoint.dart';
 

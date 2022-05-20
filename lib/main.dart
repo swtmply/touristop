@@ -18,6 +18,8 @@ import 'package:touristop/screens/main/enable_location_screen.dart';
 import 'package:touristop/screens/main/login_screen.dart';
 import 'package:touristop/screens/main/map_screen.dart';
 import 'package:touristop/screens/sections/spot_information.dart';
+import 'package:touristop/screens/sections/spot_reviews.dart';
+import 'package:touristop/screens/tests/user_test_screen.dart';
 import 'screens/main/select_spots/select_spots_screen.dart';
 
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -79,7 +81,8 @@ class MyApp extends ConsumerWidget {
         '/calendar': (context) => const CalendarScreen(),
         '/select-spots': (context) => const SelectSpotsScreen(),
         '/selected-spot': (context) => const SpotInformation(),
-        '/login': (context) => const LoginScreen()
+        '/login': (context) => const LoginScreen(),
+        '/spot-reviews': (context) => const SpotReviewsScreen(),
       },
       home: Scaffold(
         body: SafeArea(

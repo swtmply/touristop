@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:touristop/main.dart';
 import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
+import 'package:touristop/screens/sections/spot_reviews.dart';
 
 class SpotInformation extends ConsumerWidget {
   const SpotInformation({Key? key}) : super(key: key);
@@ -61,6 +62,8 @@ class SpotInformation extends ConsumerWidget {
               ],
             ),
             Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: const EdgeInsets.fromLTRB(20, 20, 0, 5),
@@ -99,7 +102,7 @@ class SpotInformation extends ConsumerWidget {
                           textAlign: TextAlign.center,
                           text: TextSpan(
                             style: GoogleFonts.inter(
-                              fontSize: 12,
+                              fontSize: 16,
                               color: Colors.black,
                               fontWeight: FontWeight.w400,
                             ),
@@ -123,6 +126,29 @@ class SpotInformation extends ConsumerWidget {
                     ],
                   ),
                 ),
+                SizedBox(height: 5),
+                 Container(
+                   padding: EdgeInsets.symmetric(horizontal: 20),
+                   child: RichText(
+                            textAlign: TextAlign.justify,
+                            text: TextSpan(
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              children: <TextSpan>[
+                                const TextSpan(text: 'Entrance Fee: '),
+                                TextSpan(
+                                    text: spot.spot!.fee.toString(),
+                                    style: GoogleFonts.inter(
+                                      color:
+                                          Color.fromARGB(255, 18, 18, 18),
+                                      fontSize: 12,
+                                    )),
+                              ],
+                            )),
+                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Divider(
@@ -196,7 +222,15 @@ class SpotInformation extends ConsumerWidget {
                         size: const Size(86, 56),
                         child: Material(
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                               Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SpotReviewsScreen(),
+                              ),
+                              (Route<dynamic> route) => false,
+                            );
+                            },
                             child: Column(
                               // mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -229,6 +263,17 @@ class SpotInformation extends ConsumerWidget {
                     thickness: 2,
                     color: Colors.grey[300],
                   ),
+                ),
+                
+                 Container(
+                  padding: EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+                  child: Text('Address: ' + spot.spot!.address.toString(),
+                  style: GoogleFonts.inter(
+                    fontSize: 16,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w500,
+                    color: Color.fromARGB(255, 134, 134, 134),
+                  ),),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
