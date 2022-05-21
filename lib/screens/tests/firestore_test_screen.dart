@@ -30,7 +30,16 @@ class _FirestoreTestScreenState extends State<FirestoreTestScreen> {
           return ListView.builder(
             itemCount: spots.length,
             itemBuilder: (context, index) {
-              TouristSpot spot = TouristSpot(name: spots[index]['name']);
+              TouristSpot spot = TouristSpot(
+                name: spots[index]['name'],
+                description: spots[index]['description'],
+                image: spots[index]['image'],
+                distanceFromUser: 0,
+                position: spots[index]['position'],
+                dates: spots[index]['dates'],
+                address: spots[index]['address'],
+                fee: spots[index]['fee'],
+              );
 
               return Text(spot.name.toString());
             },

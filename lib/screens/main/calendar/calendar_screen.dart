@@ -75,7 +75,7 @@ class _SubmitButton extends StatelessWidget {
         onPressed: data.dates.isEmpty
             ? () {}
             : () {
-                Navigator.pushNamed(context, '/map');
+                Navigator.pushNamed(context, '/select-spots');
               },
         child: const Text('Submit'),
       ),
