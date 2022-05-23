@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:touristop/main.dart';
@@ -31,10 +32,10 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Select dates you want to travel',
-                  style: TextStyle(
-                    fontSize: 32,
+                  style: GoogleFonts.inter(
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -44,9 +45,9 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                 // Date Picker
                 DatePickerCalendar(controller: _controller),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Selected Dates:',
-                  style: TextStyle(
+                  style: GoogleFonts.inter(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -58,27 +59,44 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                 // Submit button
                 Align(
                   alignment: Alignment.centerRight,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: dates.selectedDates.isEmpty
-                          ? Colors.grey[300]
-                          : Colors.pink,
-                      primary: dates.selectedDates.isEmpty
-                          ? Colors.grey[400]
-                          : Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: 32.0,
+                  child: Container(
+                    width: 180,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Color.fromRGBO(93, 107, 230, 1),
+                          Color.fromRGBO(93, 230, 197, 1),
+                        ],
                       ),
+                      borderRadius: BorderRadius.circular(5.0),
                     ),
-                    onPressed: dates.selectedDates.isEmpty
-                        ? () {
-                            datesBox.deleteFromDisk();
-                          }
-                        : () {
-                            Navigator.pushNamed(context, '/select/spots');
-                          },
-                    child: const Text('Submit'),
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                        backgroundColor: dates.selectedDates.isEmpty
+                            ? Colors.grey[300]
+                            : Colors.transparent,
+                        primary: dates.selectedDates.isEmpty
+                            ? Colors.grey[400]
+                            : Colors.white,
+                       
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
+                      onPressed: dates.selectedDates.isEmpty
+                          ? () {}
+                          : () {
+                              Navigator.pushNamed(context, '/select/spots');
+                            },
+                      child: Text('Submit',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                          )),
+                    ),
                   ),
                 ),
               ],
