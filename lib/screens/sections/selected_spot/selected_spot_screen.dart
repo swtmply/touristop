@@ -14,7 +14,7 @@ class SpotInformation extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selected = ref.watch(selectedSpotProvider);
 
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -160,7 +160,9 @@ class SpotInformation extends ConsumerWidget {
                       size: const Size(86, 56),
                       child: Material(
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(context, '/map');
+                          },
                           child: Column(
                             // mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -293,7 +295,7 @@ class SpotInformation extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 200,
                                   // child: ClipRRect(
                                   //   borderRadius: BorderRadius.circular(8.0),
@@ -341,7 +343,7 @@ class SpotInformation extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 200,
                                   // child: ClipRRect(
                                   //     borderRadius: BorderRadius.circular(8.0),
@@ -388,7 +390,7 @@ class SpotInformation extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(
+                                const SizedBox(
                                   height: 200,
                                   // child: ClipRRect(
                                   //   borderRadius: BorderRadius.circular(8.0),

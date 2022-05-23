@@ -31,6 +31,7 @@ dependencies:
 
   # Map related
   geolocator: ^8.2.1
+  google_maps_flutter: ^2.1.5
 
   # Global state manager
   flutter_riverpod: ^1.0.4

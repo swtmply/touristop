@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +25,8 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
     final reviews = FirebaseFirestore.instance.collection('reviews');
     User? user = FirebaseAuth.instance.currentUser;
 
-    final size = MediaQuery.of(context).size;
+    // final size = MediaQuery.of(context).size;
+    // ignore: todo
     // TODO add rating
     return Scaffold(
       body: Padding(
