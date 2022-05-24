@@ -31,6 +31,7 @@ dependencies:
 
   # Map related
   geolocator: ^8.2.1
+  google_maps_flutter: ^2.1.5
 
   # Global state manager
   flutter_riverpod: ^1.0.4
@@ -46,6 +47,7 @@ dependencies:
   roundcheckbox: ^2.0.4+1
   flutter_rating_bar: ^4.0.1
   introduction_screen: ^3.0.2
+  flutter_dash_nullsafety: ^1.0.0
 
 dev_dependencies:
   flutter_test:

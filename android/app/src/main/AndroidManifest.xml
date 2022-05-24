@@ -8,6 +8,10 @@
         android:label="touristop"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyAjMSWhlbBDUTmEjl3sdBLFdTA6x0LbCCs"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -13,6 +13,7 @@ import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_spot_provider.dart';
 import 'package:touristop/providers/user_location_provider.dart';
+import 'package:touristop/screens/main/map/map_screen.dart';
 import 'package:touristop/screens/sections/enable_location_screen.dart';
 import 'package:touristop/screens/main/login_screen.dart';
 import 'package:touristop/screens/main/select_dates/select_dates_screen.dart';
@@ -72,7 +73,7 @@ class MyApp extends StatelessWidget {
         '/selected/spot/reviews': (context) => const SpotReviews(),
         '/enable-location': (context) => const EnableLocationScreen(),
         '/login': (context) => const LoginScreen(),
-        // '/map':(context) => const MapScreen(),
+        '/map': (context) => const MapScreen(),
       },
       initialRoute: user != null ? '/enable-location' : '/login',
     );
