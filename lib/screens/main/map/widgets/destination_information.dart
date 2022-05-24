@@ -2,10 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:touristop/main.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 
-class DestinationInformation extends StatelessWidget {
+class DestinationInformation extends ConsumerWidget {
   const DestinationInformation(
       {Key? key, this.selectedSpot, required this.onClose})
       : super(key: key);
@@ -14,7 +16,9 @@ class DestinationInformation extends StatelessWidget {
   final Function onClose;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final spot = ref.watch(selectedSpotProvider);
+
     return Positioned(
       bottom: 0,
       child: SizedBox(
@@ -74,7 +78,7 @@ class DestinationInformation extends StatelessWidget {
                           alignment: Alignment.topRight,
                           child: TextButton(
                             onPressed: () => onClose(),
-                            child: Icon(Icons.close),
+                            child: const Icon(Icons.close),
                           ),
                         ),
                       ],
@@ -133,7 +137,10 @@ class DestinationInformation extends StatelessWidget {
                             borderRadius: BorderRadius.circular(5.0),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          spot.setSelectedSpot(selectedSpot!);
+                          Navigator.pushNamed(context, '/selected/spot');
+                        },
                         child: Text('Read more..',
                             style: GoogleFonts.inter(
                               fontSize: 14,
