@@ -10,6 +10,7 @@ import 'package:touristop/models/geopoint/geopoint_model.dart' as app;
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/screens/main/select_spots/widgets/spot_list_item.dart';
 import 'package:touristop/screens/main/select_spots/widgets/touristop_dropdown.dart';
+import 'package:touristop/theme/app_colors.dart';
 
 class SelectSpotsScreen extends ConsumerStatefulWidget {
   const SelectSpotsScreen({Key? key}) : super(key: key);
@@ -31,6 +32,15 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
     final location = ref.watch(userLocationProvider);
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        splashColor: AppColors.slime,
+        backgroundColor: AppColors.coldBlue,
+        label: const Text('Continue'),
+        onPressed: () {
+          Navigator.pushNamedAndRemoveUntil(context, '/map', (route) => false);
+        },
+        icon: const Icon(Icons.arrow_forward_outlined),
+      ),
       body: SizedBox(
         height: double.infinity,
         child: StreamBuilder<QuerySnapshot>(

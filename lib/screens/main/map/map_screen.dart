@@ -6,6 +6,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:touristop/main.dart';
 import 'package:touristop/models/spot_box/spot_box_model.dart';
+import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
+import 'package:touristop/screens/main/map/widgets/destination_card.dart';
+import 'package:touristop/screens/main/map/widgets/destination_information.dart';
+import 'package:touristop/screens/main/map/widgets/distance_card.dart';
 import 'package:touristop/screens/main/map/widgets/floating_cards.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
@@ -19,10 +23,25 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   final Completer<GoogleMapController> _controller = Completer();
   final spotsBox = Hive.box<SpotBox>('spots');
 
-  Set<Marker> _markers = {};
+  final Set<Marker> _markers = {};
 
   late PageController _pageController;
   int prevPage = 0;
+
+  // ignore: todo
+  // TODO add polylines
+  // ignore: todo
+  // TODO add realtime location
+  // ignore: todo
+  // TODO fade in and out animation of widgets
+
+  TouristSpot? selectedSpot;
+
+  void _onSpotSelect(TouristSpot? spot) {
+    setState(() {
+      selectedSpot = spot;
+    });
+  }
 
   void _onScroll() {
     if (_pageController.page?.toInt() != prevPage) {
@@ -75,9 +94,36 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             zoomControlsEnabled: false,
             markers: _markers,
           ),
-          FloatingCards(
-            pageController: _pageController,
-            spots: spotsBox.values.toList(),
+          Visibility(
+            visible: selectedSpot != null,
+            child: DestinationCard(
+              selectedSpot: selectedSpot,
+            ),
+          ),
+          Visibility(
+            visible: selectedSpot != null,
+            child: DistanceCard(
+              selectedSpot: selectedSpot,
+            ),
+          ),
+          Visibility(
+            visible: selectedSpot != null,
+            child: DestinationInformation(
+              onClose: () {
+                setState(() {
+                  selectedSpot = null;
+                });
+              },
+              selectedSpot: selectedSpot,
+            ),
+          ),
+          Visibility(
+            visible: selectedSpot == null,
+            child: FloatingCards(
+              onSpotSelect: _onSpotSelect,
+              pageController: _pageController,
+              spots: spotsBox.values.toList(),
+            ),
           )
         ],
       ),

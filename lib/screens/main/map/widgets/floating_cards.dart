@@ -5,11 +5,15 @@ import 'package:touristop/models/spot_box/spot_box_model.dart';
 
 class FloatingCards extends ConsumerWidget {
   const FloatingCards(
-      {Key? key, required this.pageController, required this.spots})
+      {Key? key,
+      required this.pageController,
+      required this.spots,
+      required this.onSpotSelect})
       : super(key: key);
 
   final PageController pageController;
   final List<SpotBox> spots;
+  final Function onSpotSelect;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +43,9 @@ class FloatingCards extends ConsumerWidget {
               );
             },
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                onSpotSelect(spots[index].spot);
+              },
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 5),
                 height: 150,
