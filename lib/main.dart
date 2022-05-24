@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/map': (context) => const MapScreen(),
       },
-      initialRoute: user != null ? '/enable-location' : '/login',
+      initialRoute: '/enable-location',
     );
   }
 }

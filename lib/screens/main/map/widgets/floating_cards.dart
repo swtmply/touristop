@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:touristop/models/spot_box/spot_box_model.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FloatingCards extends ConsumerWidget {
   const FloatingCards(
@@ -47,11 +51,70 @@ class FloatingCards extends ConsumerWidget {
                 onSpotSelect(spots[index].spot);
               },
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5),
                 height: 150,
                 width: 300,
-                color: Colors.white,
-                child: Text(spots[index].spot.name),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.white,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 110,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          color: Colors.pink,
+                          borderRadius: BorderRadius.circular(5),
+                          image: DecorationImage(
+                              image: NetworkImage(
+                                spots[index].spot.image,
+                              ),
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              spots[index].spot.name,
+                              maxLines: 3,
+                              style: GoogleFonts.inter(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            RatingBar.builder(
+                              initialRating: 5,
+                              minRating: 1,
+                              direction: Axis.horizontal,
+                              allowHalfRating: true,
+                              itemCount: 5,
+                              itemSize: 20,
+                              itemPadding: EdgeInsets.zero,
+                              itemBuilder: (context, _) => const Icon(
+                                  Icons.star,
+                                  color: Color.fromRGBO(255, 239, 100, 1)),
+                              onRatingUpdate: (rating) {
+                                inspect(rating);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

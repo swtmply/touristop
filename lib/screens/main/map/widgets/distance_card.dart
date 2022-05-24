@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 
 class DistanceCard extends StatelessWidget {
@@ -20,9 +21,26 @@ class DistanceCard extends StatelessWidget {
             ),
             height: 50,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text('Distance:'),
-                Text('${selectedSpot?.distanceFromUser?.toStringAsFixed(2)}km'),
+                Text('Distance:',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    )),
+                Text('${selectedSpot?.distanceFromUser?.toStringAsFixed(2)}km',
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                    )),
+                Text('Time Remaining:',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    )),
+                Text('16m',
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                    )),
               ],
             )),
       ),
