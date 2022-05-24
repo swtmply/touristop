@@ -10,7 +10,9 @@ import 'package:touristop/models/geopoint/geopoint_model.dart' as app;
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/screens/main/select_spots/widgets/spot_list_item.dart';
 import 'package:touristop/screens/main/select_spots/widgets/touristop_dropdown.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:touristop/theme/app_colors.dart';
+
 
 class SelectSpotsScreen extends ConsumerStatefulWidget {
   const SelectSpotsScreen({Key? key}) : super(key: key);
@@ -51,7 +53,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator.adaptive();
+              return const Center(child: CircularProgressIndicator.adaptive());
             }
 
             final currentDate = _selectedDate ?? dates.values.toList()[0].date;
@@ -82,9 +84,12 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Select places to go to'),
+                        Text('Select places to go to', style: GoogleFonts.inter(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold
+                        ),),
                         const SizedBox(
-                          height: 40,
+                          height: 20,
                         ),
                         TDropdownButton(
                           value: DateFormat('yMd').format(currentDate),
@@ -102,7 +107,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                           },
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                       ],
                     ),

@@ -17,29 +17,29 @@ class EnableLocationScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(
-              height: size.height * 0.7,
-            ),
-            // Image.asset(
-            //   "/assets/images/login_banner.png",
-            //   width: size.width,
+            // SizedBox(
             //   height: size.height * 0.7,
-            //   scale: 0.5,
-            //   fit: BoxFit.fill,
             // ),
+            Image.asset(
+              "assets/images/pin_location_banner.png",
+              width: size.width,
+              height: size.height * 0.7,
+              scale: 0.5,
+              fit: BoxFit.fill,
+            ),
             const SizedBox(
               height: 50,
             ),
             TextButton(
               style: TextButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
+                  horizontal: 85,
+                  vertical: 15,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0),
                 ),
-                backgroundColor: const Color.fromRGBO(93, 230, 197, 1),
+                backgroundColor: const Color.fromRGBO(93, 107, 230, 1),
                 primary: Colors.white,
               ),
               onPressed: () async {
