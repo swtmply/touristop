@@ -112,15 +112,15 @@ class SpotListItem extends ConsumerWidget {
             child: Align(
               alignment: Alignment.topRight,
               child: RoundCheckBox(
-                isChecked: spotsBox.containsKey(spot.name),
+                isChecked: spotsBox.containsKey('${spot.name}$selectedDate'),
                 onTap: (selectedItem) {
                   final spotItem =
                       SpotBox(spot: spot, selectedDate: selectedDate);
 
                   if (selectedItem.toString() == 'true') {
-                    spotsBox.put(spot.name, spotItem);
+                    spotsBox.put('${spot.name}$selectedDate', spotItem);
                   } else {
-                    spotsBox.delete(spot.name);
+                    spotsBox.delete('${spot.name}$selectedDate');
                   }
                 },
                 size: 25,
