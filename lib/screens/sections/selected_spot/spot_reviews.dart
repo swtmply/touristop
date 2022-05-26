@@ -1,6 +1,10 @@
+import 'dart:developer';
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +21,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
   final reviewField = TextEditingController();
 
   String review = '';
-  int rating = 0;
+  double rating = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +76,19 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
               color: Color.fromRGBO(229, 229, 229, 1),
             ),
             const SizedBox(height: 10),
+            RatingBar.builder(
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: false,
+              itemCount: 5,
+              itemSize: 20,
+              itemPadding: EdgeInsets.zero,
+              itemBuilder: (context, _) => const Icon(Icons.star,
+                  color: Color.fromRGBO(255, 239, 100, 1)),
+              onRatingUpdate: (rating) => setState(() {
+                this.rating = rating;
+              }),
+            ),
             Container(
               padding: const EdgeInsets.only(left: 10),
               decoration: BoxDecoration(
@@ -84,14 +101,15 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
               child: TextField(
                 controller: reviewField,
                 decoration: InputDecoration(
-                  hintText: 'Add a rewiew to this place.',
+                  hintText: 'Add a review to this place.',
                   border: InputBorder.none,
                   suffixIcon: IconButton(
                     onPressed: () {
                       reviews.add({
                         'review': review,
-                        'user': user!.displayName,
-                        'spot': selectedSpot.spot!.name
+                        'user': user,
+                        'spot': selectedSpot.spot!.name,
+                        'rating': rating
                       }).catchError((error) =>
                           debugPrint('Failed to add comment: $error'));
 
@@ -137,19 +155,19 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                             // padding: const EdgeInsets.symmetric(vertical: 20),
                             child: Row(
                               children: [
-                                Container(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.pink,
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        user!.photoURL.toString(),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                // Container(
+                                //   height: 60,
+                                //   width: 60,
+                                //   decoration: BoxDecoration(
+                                //     shape: BoxShape.circle,
+                                //     color: Colors.pink,
+                                //     image: DecorationImage(
+                                //       image: NetworkImage(
+                                //         data['user'].photo.toString(),
+                                //       ),
+                                //     ),
+                                //   ),
+                                // ),
                                 const SizedBox(
                                   width: 20,
                                 ),
