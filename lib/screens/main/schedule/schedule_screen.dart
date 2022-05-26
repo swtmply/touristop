@@ -66,10 +66,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                        itemCount: _spotsList?.length,
-                        itemBuilder: (context, index) {
-                          return Text(_spotsList![index].spot.name);
-                        }),
+                      itemCount: _spotsList?.length,
+                      itemBuilder: (context, index) {
+                        return Text(_spotsList![index].spot.name);
+                      },
+                    ),
                   )
                 ],
               ),
