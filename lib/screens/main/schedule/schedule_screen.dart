@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
 import 'package:touristop/models/date/date_model.dart';
 import 'package:touristop/models/spot_box/spot_box_model.dart';
-import 'package:touristop/screens/main/select_spots/widgets/spot_list_item.dart';
 
 class ScheduleScreen extends ConsumerStatefulWidget {
   const ScheduleScreen({Key? key}) : super(key: key);
@@ -22,10 +19,37 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   List<SpotBox>? _spotsList;
 
   List<SpotBox> _generateSpots(DateTime? date) {
-    return spotsBox.values.where((spotBox) {
+    final spots = spotsBox.values.where((spotBox) {
       return spotBox.selectedDate == _selectedDate ? true : false;
     }).toList();
+
+    spots.sort((a, b) {
+      final day = DateFormat('E').format(_selectedDate!).toString();
+      final scheduleA =
+              a.spot.dates!.firstWhere((element) => element['date'] == day),
+          scheduleB =
+              b.spot.dates!.firstWhere((element) => element['date'] == day);
+
+      String timeA = (scheduleA['timeClose'] as String)
+              .replaceAll(RegExp('[^0-9:]'), ''),
+          timeB = (scheduleB['timeClose'] as String)
+              .replaceAll(RegExp('[^0-9:]'), '');
+
+      TimeOfDay todA = _toTimeOfDay(timeA), todB = _toTimeOfDay(timeB);
+
+      return toDouble(todA) > toDouble(todB) ? 1 : 0;
+    });
+
+    return spots;
   }
+
+  TimeOfDay _toTimeOfDay(String time) {
+    return TimeOfDay(
+        hour: int.parse(time.split(":")[0]),
+        minute: int.parse(time.split(":")[1]));
+  }
+
+  double toDouble(TimeOfDay time) => time.hour + time.minute / 60.0;
 
   @override
   void initState() {
@@ -68,7 +92,12 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                     child: ListView.builder(
                       itemCount: _spotsList?.length,
                       itemBuilder: (context, index) {
-                        return Text(_spotsList![index].spot.name);
+                        return Column(
+                          children: [
+                            Text(_spotsList![index].spot.name),
+                            // Text(schedule['timeClose']),
+                          ],
+                        );
                       },
                     ),
                   )
