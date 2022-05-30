@@ -20,6 +20,7 @@ import 'package:touristop/screens/main/login_screen.dart';
 import 'package:touristop/screens/main/select_dates/select_dates_screen.dart';
 import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:touristop/screens/sections/selected_spot/all_spot_reviews.dart';
 import 'package:touristop/screens/sections/selected_spot/selected_spot_screen.dart';
 import 'package:touristop/screens/sections/selected_spot/spot_reviews.dart';
 
@@ -72,12 +73,13 @@ class MyApp extends StatelessWidget {
         '/select/spots': (context) => const SelectSpotsScreen(),
         '/selected/spot': (context) => const SpotInformation(),
         '/selected/spot/reviews': (context) => const SpotReviews(),
+        '/selected/spots/reviews/all': (context) => const AllSpotReviews(),
         '/enable-location': (context) => const EnableLocationScreen(),
         '/login': (context) => const LoginScreen(),
         '/map': (context) => const MapScreen(),
         '/schedule': (context) => const ScheduleScreen()
       },
-      initialRoute: '/enable-location',
+      initialRoute: user == null ? '/login' : '/enable-location',
     );
   }
 }

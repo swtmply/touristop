@@ -80,7 +80,9 @@ class SpotInformation extends ConsumerWidget {
                   alignment: Alignment.topLeft,
                   padding: const EdgeInsets.only(left: 15),
                   child: RatingBar.builder(
-                    initialRating: 5,
+                    initialRating: selected.spot!.averageRating!,
+                    ignoreGestures: true,
+                    unratedColor: const Color.fromARGB(100, 255, 241, 114),
                     minRating: 1,
                     direction: Axis.horizontal,
                     allowHalfRating: true,

@@ -115,7 +115,10 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                     child: ListView.builder(
                       itemCount: touristSpots.length,
                       itemBuilder: (context, index) {
-                        return SpotListItem(touristSpots[index], currentDate);
+                        return SpotListItem(
+                          spot: touristSpots[index],
+                          selectedDate: currentDate,
+                        );
                       },
                     ),
                   )
