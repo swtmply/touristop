@@ -17,16 +17,13 @@ class LoginScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(
+            Image.asset(
+              "assets/images/login_banner.png",
+              width: size.width,
               height: size.height * 0.7,
+              scale: 0.5,
+              fit: BoxFit.fill,
             ),
-            // Image.asset(
-            //   "/assets/images/login_banner.png",
-            //   width: size.width,
-            //   height: size.height * 0.7,
-            //   scale: 0.5,
-            //   fit: BoxFit.fill,
-            // ),
             const SizedBox(
               height: 50,
             ),

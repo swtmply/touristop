@@ -5,7 +5,9 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:touristop/main.dart';
+import 'package:touristop/models/spot_box/spot_box_model.dart';
 
 class SpotInformation extends ConsumerWidget {
   const SpotInformation({Key? key}) : super(key: key);
@@ -13,8 +15,9 @@ class SpotInformation extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selected = ref.watch(selectedSpotProvider);
+    final selectedDates = ref.watch(datesProvider);
+    final spotsBox = Hive.box<SpotBox>('spots');
 
-    // Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -77,7 +80,9 @@ class SpotInformation extends ConsumerWidget {
                   alignment: Alignment.topLeft,
                   padding: const EdgeInsets.only(left: 15),
                   child: RatingBar.builder(
-                    initialRating: 5,
+                    initialRating: selected.spot!.averageRating!,
+                    ignoreGestures: true,
+                    unratedColor: const Color.fromARGB(100, 255, 241, 114),
                     minRating: 1,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -159,6 +164,7 @@ class SpotInformation extends ConsumerWidget {
                     SizedBox.fromSize(
                       size: const Size(86, 56),
                       child: Material(
+                        color: Colors.white,
                         child: InkWell(
                           onTap: () {
                             Navigator.pushNamed(context, '/map');
@@ -188,18 +194,44 @@ class SpotInformation extends ConsumerWidget {
                       child: SizedBox.fromSize(
                         size: const Size(86, 70),
                         child: Material(
+                          color: Colors.white,
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              final spotItem = SpotBox(
+                                spot: selected.spot!,
+                                selectedDate: selectedDates.selectedDate!,
+                              );
+
+                              if (spotsBox.containsKey(
+                                  '${selected.spot!.name}${selectedDates.selectedDate}')) {
+                                spotsBox.put(
+                                  '${selected.spot!.name}${selectedDates.selectedDate}',
+                                  spotItem,
+                                );
+                              } else {
+                                spotsBox.delete(
+                                    '${selected.spot!.name}${selectedDates.selectedDate}');
+                              }
+                            },
                             child: Column(
-                              // mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                const Icon(
-                                  Icons.add,
-                                  color: Color.fromRGBO(130, 130, 130, 1),
-                                  size: 30,
-                                ),
+                                spotsBox.containsKey(
+                                        '${selected.spot!.name}${selectedDates.selectedDate}')
+                                    ? const Icon(
+                                        Icons.close,
+                                        color: Color.fromRGBO(130, 130, 130, 1),
+                                        size: 30,
+                                      )
+                                    : const Icon(
+                                        Icons.add,
+                                        color: Color.fromRGBO(130, 130, 130, 1),
+                                        size: 30,
+                                      ),
                                 Text(
-                                  "Add to Schedule",
+                                  spotsBox.containsKey(
+                                          '${selected.spot!.name}${selectedDates.selectedDate}')
+                                      ? 'Remove to Schedule'
+                                      : "Add to Schedule",
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
                                       fontSize: 16,
@@ -215,6 +247,7 @@ class SpotInformation extends ConsumerWidget {
                     SizedBox.fromSize(
                       size: const Size(86, 56),
                       child: Material(
+                        color: Colors.white,
                         child: InkWell(
                           onTap: () {
                             Navigator.pushNamed(

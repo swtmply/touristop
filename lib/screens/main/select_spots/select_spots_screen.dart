@@ -13,7 +13,6 @@ import 'package:touristop/screens/main/select_spots/widgets/touristop_dropdown.d
 import 'package:google_fonts/google_fonts.dart';
 import 'package:touristop/theme/app_colors.dart';
 
-
 class SelectSpotsScreen extends ConsumerStatefulWidget {
   const SelectSpotsScreen({Key? key}) : super(key: key);
 
@@ -26,12 +25,11 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
   final Stream<QuerySnapshot> spots =
       FirebaseFirestore.instance.collection('spots').snapshots();
 
-  DateTime? _selectedDate;
-
   @override
   Widget build(BuildContext context) {
     final dates = Hive.box<Date>('dates');
     final location = ref.watch(userLocationProvider);
+    final selectedDates = ref.watch(datesProvider);
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
@@ -39,7 +37,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
         backgroundColor: AppColors.coldBlue,
         label: const Text('Continue'),
         onPressed: () {
-          Navigator.pushNamedAndRemoveUntil(context, '/map', (route) => false);
+          Navigator.pushNamed(context, '/schedule');
         },
         icon: const Icon(Icons.arrow_forward_outlined),
       ),
@@ -56,7 +54,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
               return const Center(child: CircularProgressIndicator.adaptive());
             }
 
-            final currentDate = _selectedDate ?? dates.values.toList()[0].date;
+            final currentDate = selectedDates.selectedDate!;
             final docs = snapshot.requireData.docs;
 
             List<TouristSpot> touristSpots = docs
@@ -84,10 +82,11 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Select places to go to', style: GoogleFonts.inter(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold
-                        ),),
+                        Text(
+                          'Select places to go to',
+                          style: GoogleFonts.inter(
+                              fontSize: 32, fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(
                           height: 20,
                         ),
@@ -102,7 +101,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                           }).toList(),
                           onChanged: (value) {
                             setState(() {
-                              _selectedDate = value;
+                              selectedDates.setSelectedDate(value);
                             });
                           },
                         ),
@@ -116,7 +115,10 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                     child: ListView.builder(
                       itemCount: touristSpots.length,
                       itemBuilder: (context, index) {
-                        return SpotListItem(touristSpots[index], currentDate);
+                        return SpotListItem(
+                          spot: touristSpots[index],
+                          selectedDate: currentDate,
+                        );
                       },
                     ),
                   )

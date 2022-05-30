@@ -5,6 +5,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:touristop/main.dart';
 import 'package:touristop/models/date/date_model.dart';
+import 'package:touristop/models/spot_box/spot_box_model.dart';
 import 'package:touristop/screens/main/select_dates/widgets/date_picker_calendar.dart';
 import 'package:touristop/screens/main/select_dates/widgets/selected_dates.dart';
 
@@ -22,6 +23,7 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
   @override
   Widget build(BuildContext context) {
     final dates = ref.watch(datesProvider);
+    final spotsBox = Hive.box<SpotBox>('spots');
     final datesBox = Hive.box<Date>('dates');
 
     return Scaffold(
@@ -82,14 +84,17 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                         primary: dates.selectedDates.isEmpty
                             ? Colors.grey[400]
                             : Colors.white,
-                       
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
                       onPressed: dates.selectedDates.isEmpty
-                          ? () {}
+                          ? () {
+                              spotsBox.deleteFromDisk();
+                              datesBox.deleteFromDisk();
+                            }
                           : () {
+                              dates.setSelectedDate(dates.selectedDates.first);
                               Navigator.pushNamed(context, '/select/spots');
                             },
                       child: Text('Submit',

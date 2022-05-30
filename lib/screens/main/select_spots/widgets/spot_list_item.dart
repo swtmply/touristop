@@ -10,22 +10,38 @@ import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:touristop/main.dart';
 import 'package:touristop/models/spot_box/spot_box_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
+import 'package:touristop/utils/reviews.dart';
 
-class SpotListItem extends ConsumerWidget {
-  const SpotListItem(this.spot, this.selectedDate, {Key? key})
-      : super(key: key);
-
+class SpotListItem extends ConsumerStatefulWidget {
   final TouristSpot spot;
   final DateTime selectedDate;
 
+  const SpotListItem({Key? key, required this.spot, required this.selectedDate})
+      : super(key: key);
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _SpotListItemState();
+}
+
+class _SpotListItemState extends ConsumerState<SpotListItem> {
+  @override
+  void initState() {
+    super.initState();
+    Reviews.reviewAverage(widget.spot.name).then((value) {
+      setState(() {
+        widget.spot.averageRating = value.isNaN ? 0 : value;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final selectedSpot = ref.watch(selectedSpotProvider);
     final spotsBox = Hive.box<SpotBox>('spots');
 
     return InkWell(
       onTap: () {
-        selectedSpot.setSelectedSpot(spot);
+        selectedSpot.setSelectedSpot(widget.spot);
         Navigator.pushNamed(context, '/selected/spot');
       },
       child: Stack(
@@ -36,7 +52,7 @@ class SpotListItem extends ConsumerWidget {
             height: 150,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(spot.image),
+                image: NetworkImage(widget.spot.image),
                 fit: BoxFit.cover,
                 colorFilter: ColorFilter.mode(
                   const Color.fromARGB(255, 0, 0, 0).withOpacity(0.6),
@@ -57,7 +73,7 @@ class SpotListItem extends ConsumerWidget {
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.5,
                           child: Text(
-                            spot.name,
+                            widget.spot.name,
                             overflow: TextOverflow.clip,
                             maxLines: 1,
                             style: GoogleFonts.inter(
@@ -71,19 +87,21 @@ class SpotListItem extends ConsumerWidget {
                         alignment: Alignment.topLeft,
                         padding: const EdgeInsets.only(left: 15, top: 10),
                         child: RatingBar.builder(
-                          initialRating: 5,
-                          minRating: 1,
+                          ignoreGestures: true,
+                          unratedColor:
+                              const Color.fromARGB(100, 255, 241, 114),
+                          initialRating: widget.spot.averageRating ?? 0,
                           direction: Axis.horizontal,
                           allowHalfRating: true,
                           itemCount: 5,
                           itemSize: 25,
                           itemPadding:
                               const EdgeInsets.symmetric(horizontal: 2),
-                          itemBuilder: (context, _) => const Icon(Icons.star,
-                              color: Color.fromRGBO(255, 239, 100, 1)),
-                          onRatingUpdate: (rating) {
-                            inspect(rating);
-                          },
+                          itemBuilder: (context, _) => const Icon(
+                            Icons.star,
+                            color: Color.fromRGBO(255, 239, 100, 1),
+                          ),
+                          onRatingUpdate: (rating) {},
                         ),
                       ),
                     ],
@@ -93,7 +111,7 @@ class SpotListItem extends ConsumerWidget {
                     padding: const EdgeInsets.only(left: 10, right: 30),
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      spot.description,
+                      widget.spot.description,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                       style: GoogleFonts.inter(
@@ -112,15 +130,18 @@ class SpotListItem extends ConsumerWidget {
             child: Align(
               alignment: Alignment.topRight,
               child: RoundCheckBox(
-                isChecked: spotsBox.containsKey(spot.name),
+                isChecked: spotsBox
+                    .containsKey('${widget.spot.name}${widget.selectedDate}'),
                 onTap: (selectedItem) {
-                  final spotItem =
-                      SpotBox(spot: spot, selectedDate: selectedDate);
+                  final spotItem = SpotBox(
+                      spot: widget.spot, selectedDate: widget.selectedDate);
 
                   if (selectedItem.toString() == 'true') {
-                    spotsBox.put(spot.name, spotItem);
+                    spotsBox.put(
+                        '${widget.spot.name}${widget.selectedDate}', spotItem);
                   } else {
-                    spotsBox.delete(spot.name);
+                    spotsBox
+                        .delete('${widget.spot.name}${widget.selectedDate}');
                   }
                 },
                 size: 25,

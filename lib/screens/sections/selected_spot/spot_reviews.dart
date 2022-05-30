@@ -1,10 +1,15 @@
+import 'dart:developer';
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:touristop/main.dart';
+import 'package:touristop/utils/reviews.dart';
 
 class SpotReviews extends ConsumerStatefulWidget {
   const SpotReviews({Key? key}) : super(key: key);
@@ -17,7 +22,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
   final reviewField = TextEditingController();
 
   String review = '';
-  int rating = 0;
+  double rating = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +30,6 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
     final reviews = FirebaseFirestore.instance.collection('reviews');
     User? user = FirebaseAuth.instance.currentUser;
 
-    // final size = MediaQuery.of(context).size;
-    // ignore: todo
-    // TODO add rating
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -41,12 +43,12 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                   Navigator.pop(context);
                 },
                 icon: const FaIcon(
-                  FontAwesomeIcons.chevronLeft,
+                  FontAwesomeIcons.arrowLeft,
                   color: Colors.black,
                   size: 20,
                 ),
                 label: Text(
-                  'Back',
+                  'Reviews',
                   style: GoogleFonts.inter(
                     color: Colors.black,
                     fontSize: 16,
@@ -55,15 +57,65 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                 ),
               ),
             ),
-            Container(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                'Reviews',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 22,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      alignment: Alignment.bottomLeft,
+                      child: Text(
+                        'Tourist Spot Ratings',
+                        style: GoogleFonts.inter(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 22,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        RatingBar.builder(
+                          initialRating: selectedSpot.spot!.averageRating!,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemSize: 20,
+                          itemPadding: EdgeInsets.zero,
+                          onRatingUpdate: (rating) => setState(() {
+                            this.rating = rating;
+                          }),
+                          itemBuilder: (context, _) => const Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ),
+                        Text('${selectedSpot.spot!.averageRating!}/5')
+                      ],
+                    ),
+                  ],
                 ),
-              ),
+                TextButton(
+                  onPressed: () {},
+                  child: Row(
+                    children: [
+                      Text(
+                        'See All',
+                        style: GoogleFonts.inter(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const FaIcon(
+                        FontAwesomeIcons.arrowRight,
+                        color: Colors.black,
+                        size: 20,
+                      )
+                    ],
+                  ),
+                )
+              ],
             ),
             const SizedBox(height: 10),
             const Divider(
@@ -72,6 +124,19 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
               color: Color.fromRGBO(229, 229, 229, 1),
             ),
             const SizedBox(height: 10),
+            RatingBar.builder(
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: false,
+              itemCount: 5,
+              itemSize: 20,
+              itemPadding: EdgeInsets.zero,
+              itemBuilder: (context, _) => const Icon(Icons.star,
+                  color: Color.fromRGBO(255, 239, 100, 1)),
+              onRatingUpdate: (rating) => setState(() {
+                this.rating = rating;
+              }),
+            ),
             Container(
               padding: const EdgeInsets.only(left: 10),
               decoration: BoxDecoration(
@@ -84,14 +149,16 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
               child: TextField(
                 controller: reviewField,
                 decoration: InputDecoration(
-                  hintText: 'Add a rewiew to this place.',
+                  hintText: 'Add a review to this place.',
                   border: InputBorder.none,
                   suffixIcon: IconButton(
                     onPressed: () {
                       reviews.add({
                         'review': review,
                         'user': user!.displayName,
-                        'spot': selectedSpot.spot!.name
+                        'userPhoto': user.photoURL,
+                        'spot': selectedSpot.spot!.name,
+                        'rating': rating
                       }).catchError((error) =>
                           debugPrint('Failed to add comment: $error'));
 
@@ -109,7 +176,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
             const SizedBox(height: 20),
             Expanded(
               child: StreamBuilder(
-                stream: reviews.snapshots(),
+                stream: Reviews.spotReviews(selectedSpot.spot!.name),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return const Text('Something went wrong');
@@ -145,7 +212,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                                     color: Colors.pink,
                                     image: DecorationImage(
                                       image: NetworkImage(
-                                        user!.photoURL.toString(),
+                                        data['userPhoto'],
                                       ),
                                     ),
                                   ),
@@ -163,6 +230,21 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                                       style: GoogleFonts.inter(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    RatingBar.builder(
+                                      initialRating: data['rating'],
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemSize: 20,
+                                      itemPadding: EdgeInsets.zero,
+                                      onRatingUpdate: (rating) => setState(() {
+                                        this.rating = rating;
+                                      }),
+                                      itemBuilder: (context, _) => const Icon(
+                                        Icons.star,
+                                        color: Colors.amber,
                                       ),
                                     ),
                                     Text(
