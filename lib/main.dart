@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
         '/map': (context) => const MapScreen(),
         '/schedule': (context) => const ScheduleScreen()
       },
-      initialRoute: user == null ? '/login' : '/enable-location',
+      initialRoute: '/enable-location',
     );
   }
 }
