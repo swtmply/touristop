@@ -35,7 +35,7 @@ class DestinationInformation extends ConsumerWidget {
           //     ),
           //   ],
           // ),
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
 
           child: Row(
             children: [
@@ -86,14 +86,12 @@ class DestinationInformation extends ConsumerWidget {
                     const SizedBox(
                       height: 5,
                     ),
-                    Container(
-                      child: Text(
-                        selectedSpot!.description,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                        ),
+                    Text(
+                      selectedSpot!.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
                       ),
                     ),
                     const SizedBox(

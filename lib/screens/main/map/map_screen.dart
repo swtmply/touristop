@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -82,8 +80,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final selected = ref.watch(selectedSpotsProvider);
 
     LatLng userPosition = LatLng(
-      14.5995,
-      120.9842,
+      userLocation.position?.latitude ?? 14.5995,
+      userLocation.position?.longitude ?? 120.9842,
     );
 
     return Scaffold(

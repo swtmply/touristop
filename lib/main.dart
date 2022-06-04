@@ -18,6 +18,7 @@ import 'package:touristop/screens/main/select_dates/select_dates_screen.dart';
 import 'package:touristop/screens/main/select_spots/cluster_select_spots_screen.dart';
 import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
 import 'package:touristop/screens/sections/enable_location_screen.dart';
+import 'package:touristop/screens/sections/introduction_screen.dart';
 import 'package:touristop/screens/sections/login_screen.dart';
 import 'package:touristop/screens/sections/select_spot/all_spot_reviews_screen.dart';
 import 'package:touristop/screens/sections/select_spot/spot_reviews_screen.dart';
@@ -70,8 +71,9 @@ class MyApp extends ConsumerWidget {
         '/navigation': (context) => const Navigation(),
         '/map': (context) => const MapScreen(),
         '/login': (context) => const LoginScreen(),
+        '/introduction': (context) => const Introduction(),
       },
-      initialRoute: '/enable-location',
+      initialRoute: '/introduction',
       // initialRoute: user == null
       //     ? '/login'
       //     : userLocation.position == null

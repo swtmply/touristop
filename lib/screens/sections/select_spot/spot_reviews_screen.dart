@@ -142,7 +142,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       const FaIcon(
@@ -275,33 +275,29 @@ Future<void> ratingDialog(BuildContext context) async {
         child: Container(
           height: 270,
           width: 400,
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                child: Text(
-                  'Add Reviews',
-                  style: GoogleFonts.inter(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
+              Text(
+                'Add Reviews',
+                style: GoogleFonts.inter(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 children: [
-                  Container(
-                    child: Text(
-                      'Rating:  ',
-                      style: GoogleFonts.inter(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  Text(
+                    'Rating:  ',
+                    style: GoogleFonts.inter(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   RatingBar.builder(
@@ -317,38 +313,27 @@ Future<void> ratingDialog(BuildContext context) async {
                   ),
                 ],
               ),
-              SizedBox(height: 10),
-              Container(
-                child: Text(
-                  'Comment:  ',
-                  style: GoogleFonts.inter(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
+              const SizedBox(height: 10),
+              Text(
+                'Comment:  ',
+                style: GoogleFonts.inter(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              SizedBox(height: 10),
-              Container(
-                // decoration: const BoxDecoration(
-                //   border: Border(
-                //       bottom: BorderSide(
-                //     color: Colors.black,
-                //     width: 3.0,
-                //   )),
-                // ),
-                child: TextField(
-                  // controller: reviewField,
-                  decoration: InputDecoration(
-                    hintText: 'Enter Comment',
-                    hintStyle: GoogleFonts.inter(
-                        color: Color.fromRGBO(212, 212, 212, 1)),
-                    contentPadding: EdgeInsets.only(bottom: 30),
-                  ),
-                  onChanged: (value) {
-                    // review = value;
-                  },
+              const SizedBox(height: 10),
+              TextField(
+                // controller: reviewField,
+                decoration: InputDecoration(
+                  hintText: 'Enter Comment',
+                  hintStyle: GoogleFonts.inter(
+                      color: const Color.fromRGBO(212, 212, 212, 1)),
+                  contentPadding: const EdgeInsets.only(bottom: 30),
                 ),
+                onChanged: (value) {
+                  // review = value;
+                },
               ),
               // TextButton(
               //     onPressed: () {
@@ -364,7 +349,7 @@ Future<void> ratingDialog(BuildContext context) async {
               //       // reviewField.clear();
               //     },
               //
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Align(
                 alignment: Alignment.centerRight,
                 child: Container(

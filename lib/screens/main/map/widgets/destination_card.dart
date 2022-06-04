@@ -73,7 +73,7 @@ class DestinationCard extends StatelessWidget {
                           'Origin',
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            color: Color.fromRGBO(130, 130, 130, 1),
+                            color: const Color.fromRGBO(130, 130, 130, 1),
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -81,7 +81,7 @@ class DestinationCard extends StatelessWidget {
                           'Current Location',
                           style: GoogleFonts.inter(
                             fontSize: 18,
-                            color: Color.fromARGB(255, 10, 10, 10),
+                            color: const Color.fromARGB(255, 10, 10, 10),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -98,7 +98,7 @@ class DestinationCard extends StatelessWidget {
                           'Destination',
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            color: Color.fromRGBO(130, 130, 130, 1),
+                            color: const Color.fromRGBO(130, 130, 130, 1),
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -107,7 +107,7 @@ class DestinationCard extends StatelessWidget {
                           maxLines: 2,
                           style: GoogleFonts.inter(
                             fontSize: 18,
-                            color: Color.fromARGB(255, 10, 10, 10),
+                            color: const Color.fromARGB(255, 10, 10, 10),
                             fontWeight: FontWeight.bold,
                           ),
                         ),

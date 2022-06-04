@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
 
 class DatesProvider extends ChangeNotifier {
-  List<DatesList> _datesList = [];
+  final List<DatesList> _datesList = [];
   DatesList? _selectedDate;
 
   List<DatesList> get datesList => _datesList;
