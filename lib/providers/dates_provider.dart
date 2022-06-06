@@ -15,6 +15,11 @@ class DatesProvider extends ChangeNotifier {
     return DateFormat('yMd').format(date).toString();
   }
 
+  void sortDates() {
+    _datesList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+    notifyListeners();
+  }
+
   void setSelectedDate(DatesList date) {
     _selectedDate = date;
     notifyListeners();

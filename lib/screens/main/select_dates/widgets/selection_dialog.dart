@@ -1,22 +1,31 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/theme/app_colors.dart';
 
 class SelectionDialog extends ConsumerStatefulWidget {
-  const SelectionDialog({Key? key}) : super(key: key);
+  final bool isArrivalIncluded;
+  const SelectionDialog({Key? key, required this.isArrivalIncluded})
+      : super(key: key);
 
   @override
   ConsumerState<SelectionDialog> createState() => _SelectionDialogState();
 }
 
 class _SelectionDialogState extends ConsumerState<SelectionDialog> {
+  final datesBox = Hive.box<DatesList>('dates');
+
   String selected = '';
 
   @override
   Widget build(BuildContext context) {
     final dates = ref.watch(datesProvider);
+    final bool isArrivalIncluded = widget.isArrivalIncluded;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -89,9 +98,21 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
-                      onPressed: () {
-                        dates.setSelectedDate(dates.datesList.first);
+                      onPressed: () async {
+                        if (!isArrivalIncluded) {
+                          dates.datesList.removeAt(0);
+                        }
 
+                        final finalDates = dates.datesList.map((e) =>
+                            DatesList(dateTime: e.dateTime, timeRemaining: 8));
+
+                        await datesBox.clear();
+                        datesBox.putAll({
+                          for (var e in finalDates)
+                            dates.toDateKey(e.dateTime): e
+                        });
+
+                        dates.setSelectedDate(dates.datesList.first);
                         if (selected == 'Plan your own trip') {
                           Navigator.pushNamed(context, '/select/spots');
                         } else {

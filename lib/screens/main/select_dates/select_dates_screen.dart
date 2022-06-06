@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:intl/intl.dart';
+import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/models/selected_spots/selected_spots_model.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
-import 'package:touristop/screens/main/select_dates/widgets/date_picker_calendar.dart';
-import 'package:touristop/screens/main/select_dates/widgets/selected_dates.dart';
+import 'package:touristop/screens/main/select_dates/widgets/date_picker_dialog.dart';
 import 'package:touristop/screens/main/select_dates/widgets/selection_dialog.dart';
+import 'package:touristop/theme/app_colors.dart';
 
 class SelectDatesScreen extends ConsumerStatefulWidget {
   const SelectDatesScreen({Key? key}) : super(key: key);
@@ -20,8 +23,10 @@ class SelectDatesScreen extends ConsumerStatefulWidget {
 }
 
 class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
-  final DateRangePickerController _controller = DateRangePickerController();
+  // final DateRangePickerController _controller = DateRangePickerController();
   String selectedOption = '';
+  DateTime? first, second;
+  bool isArrivalIncluded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +44,7 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Select dates you want to travel',
+                  'Dates of travel',
                   style: GoogleFonts.inter(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -49,18 +54,108 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                   height: 20,
                 ),
                 // Date Picker
-                DatePickerCalendar(controller: _controller),
                 const SizedBox(height: 20),
-                Text(
-                  'Selected Dates:',
-                  style: GoogleFonts.inter(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10),
                 // Selected Dates
-                SelectedDates(controller: _controller),
+                Column(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        showGeneralDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          barrierLabel: MaterialLocalizations.of(context)
+                              .modalBarrierDismissLabel,
+                          pageBuilder: (BuildContext buildContext,
+                                  Animation animation,
+                                  Animation secondaryAnimation) =>
+                              AppDatePickerDialog(
+                            date: DateTime.now(),
+                            onChange: (value) {
+                              setState(() {
+                                first = value;
+                                second = first!.add(const Duration(days: 1));
+
+                                dates.datesList.clear();
+                                dates.datesList.addAll([
+                                  DatesList(dateTime: first!, timeRemaining: 8),
+                                  DatesList(dateTime: second!, timeRemaining: 8)
+                                ]);
+                              });
+                            },
+                          ),
+                        );
+                      },
+                      child: SelectDateButton(
+                        date: first,
+                        title: 'Arrival date',
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    InkWell(
+                      onTap: () {
+                        showGeneralDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          barrierLabel: MaterialLocalizations.of(context)
+                              .modalBarrierDismissLabel,
+                          pageBuilder: (BuildContext buildContext,
+                                  Animation animation,
+                                  Animation secondaryAnimation) =>
+                              AppDatePickerDialog(
+                            date: first?.add(const Duration(days: 1)) ??
+                                DateTime.now().add(const Duration(days: 1)),
+                            onChange: (value) {
+                              setState(() {
+                                second = value;
+
+                                final daysBetween =
+                                    second!.difference(first!).inDays;
+                                dates.datesList.clear();
+
+                                for (var i = 0; i < daysBetween; i++) {
+                                  final date = first!.add(Duration(days: i));
+
+                                  dates.datesList.add(
+                                    DatesList(dateTime: date, timeRemaining: 8),
+                                  );
+                                }
+                              });
+                            },
+                          ),
+                        );
+                      },
+                      child: SelectDateButton(
+                        date: second,
+                        title: 'Departure date',
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        RoundCheckBox(
+                          size: 30,
+                          checkedColor: AppColors.slime,
+                          border: Border.all(
+                            width: 2.0,
+                            color: isArrivalIncluded
+                                ? AppColors.slime
+                                : Colors.black,
+                          ),
+                          animationDuration: const Duration(microseconds: 0),
+                          isChecked: isArrivalIncluded,
+                          onTap: (value) {
+                            setState(() {
+                              isArrivalIncluded = value!;
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                            'Include date of arrival within the date of travel'),
+                      ],
+                    )
+                  ],
+                ),
                 const SizedBox(height: 30),
                 // Submit button
                 Align(
@@ -82,17 +177,16 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                     child: TextButton(
                       style: TextButton.styleFrom(
                         minimumSize: const Size.fromHeight(50),
-                        backgroundColor: dates.datesList.isEmpty
+                        backgroundColor: first == null
                             ? const Color.fromARGB(255, 250, 250, 250)
                             : Colors.transparent,
-                        primary: dates.datesList.isEmpty
-                            ? Colors.grey[400]
-                            : Colors.white,
+                        primary:
+                            first == null ? Colors.grey[400] : Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
-                      onPressed: dates.datesList.isEmpty
+                      onPressed: first == null
                           ? () {
                               spotsBox.deleteFromDisk();
                               datesBox.deleteFromDisk();
@@ -107,7 +201,9 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                                 pageBuilder: (BuildContext buildContext,
                                         Animation animation,
                                         Animation secondaryAnimation) =>
-                                    const SelectionDialog(),
+                                    SelectionDialog(
+                                  isArrivalIncluded: isArrivalIncluded,
+                                ),
                               );
                             },
                       child: Text(
@@ -122,6 +218,72 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SelectDateButton extends StatelessWidget {
+  const SelectDateButton({
+    Key? key,
+    required this.date,
+    required this.title,
+  }) : super(key: key);
+
+  final DateTime? date;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 130,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(
+          color: Colors.black,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 30),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    date != null
+                        ? DateFormat.yMMMMd('en_US').format(date!)
+                        : 'Click here to select a date',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                  if (date != null)
+                    Text(
+                      DateFormat.EEEE().format(date!),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
+import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/theme/app_colors.dart';
 
 extension TimeOfDayExtension on TimeOfDay {
@@ -83,6 +84,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final dates = ref.watch(datesProvider);
+
     return Scaffold(
       body: SafeArea(
         child: Row(
@@ -113,7 +116,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                       child: ListView(
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          children: datesBox.values.map((e) {
+                          children: dates.datesList.map((e) {
                             return Container(
                               color: _selectedDate == e.dateTime
                                   ? AppColors.slime

@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:touristop/screens/sections/enable_location_screen.dart';
+import 'package:touristop/screens/sections/login_screen.dart';
 
 class Introduction extends StatelessWidget {
   const Introduction({Key? key}) : super(key: key);
@@ -10,6 +12,7 @@ class Introduction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    User? user = FirebaseAuth.instance.currentUser;
 
     return SafeArea(
       child: IntroductionScreen(
@@ -146,7 +149,10 @@ class Introduction extends StatelessWidget {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => const EnableLocationScreen()),
+              builder: (context) => user == null
+                  ? const LoginScreen()
+                  : const EnableLocationScreen(),
+            ),
             (Route<dynamic> route) => false,
           );
         },

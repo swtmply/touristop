@@ -45,7 +45,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final datesList = Hive.box<DatesList>('dates');
+    final datesBox = Hive.box<DatesList>('dates');
     final spotsList = Hive.box<SpotsList>('spots');
     final location = ref.watch(userLocationProvider);
     final selectedDates = ref.watch(datesProvider);
@@ -113,14 +113,14 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                         AppDropdown(
                           value: DateFormat('yMd').format(currentDate.dateTime),
                           hint: 'Select Dates:',
-                          listItems: datesList.values.map((date) {
+                          listItems: selectedDates.datesList.map((date) {
                             return {
                               'value': date.dateTime,
                               'text': DateFormat('yMd').format(date.dateTime)
                             };
                           }).toList(),
                           onChanged: (value) {
-                            final date = datesList.get(
+                            final date = datesBox.get(
                                 DateFormat('yMd').format(value).toString());
 
                             setState(() {
