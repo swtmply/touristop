@@ -5,6 +5,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/providers/selected_spots.dart';
 import 'package:touristop/screens/sections/select_spot/all_spot_reviews_screen.dart';
 import 'package:touristop/utils/reviews.dart';
@@ -21,12 +22,15 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
 
   String review = '';
   double rating = 0;
+  late TouristSpot spot;
 
   @override
   Widget build(BuildContext context) {
     final selectedSpot = ref.watch(selectedSpotsProvider);
-    final reviews = FirebaseFirestore.instance.collection('reviews');
-    User? user = FirebaseAuth.instance.currentUser;
+
+    setState(() {
+      spot = selectedSpot.firstSpot!;
+    });
 
     return Scaffold(
       body: Padding(
@@ -262,135 +266,126 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
       ),
     );
   }
-}
 
-Future<void> ratingDialog(BuildContext context) async {
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        backgroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12.0))),
-        child: Container(
-          height: 270,
-          width: 400,
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Add Reviews',
-                style: GoogleFonts.inter(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
+  Future<void> ratingDialog(BuildContext context) async {
+    final reviews = FirebaseFirestore.instance.collection('reviews');
+    User? user = FirebaseAuth.instance.currentUser;
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          child: Container(
+            height: 270,
+            width: 400,
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Add Reviews',
+                  style: GoogleFonts.inter(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Text(
-                    'Rating:  ',
-                    style: GoogleFonts.inter(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Text(
+                      'Rating:  ',
+                      style: GoogleFonts.inter(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    RatingBar.builder(
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: false,
+                      itemCount: 5,
+                      itemSize: 20,
+                      itemPadding: EdgeInsets.zero,
+                      itemBuilder: (context, _) => const Icon(Icons.star,
+                          color: Color.fromRGBO(255, 239, 100, 1)),
+                      onRatingUpdate: (rating) {
+                        this.rating = rating;
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Comment:  ',
+                  style: GoogleFonts.inter(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: reviewField,
+                  decoration: InputDecoration(
+                    hintText: 'Enter Comment',
+                    hintStyle: GoogleFonts.inter(
+                        color: const Color.fromRGBO(212, 212, 212, 1)),
+                    contentPadding: const EdgeInsets.only(bottom: 30),
+                  ),
+                  onChanged: (value) {
+                    review = value;
+                  },
+                ),
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: 150,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Color.fromRGBO(93, 107, 230, 1),
+                          Color.fromRGBO(93, 230, 197, 1),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        reviews.add({
+                          'review': review,
+                          'user': user!.displayName,
+                          'userPhoto': user.photoURL,
+                          'spot': spot.name,
+                          'rating': rating
+                        }).catchError((error) =>
+                            debugPrint('Failed to add comment: $error'));
+
+                        reviewField.clear();
+                      },
+                      child: Text('Submit',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            color: Colors.white,
+                          )),
                     ),
                   ),
-                  RatingBar.builder(
-                    minRating: 1,
-                    direction: Axis.horizontal,
-                    allowHalfRating: false,
-                    itemCount: 5,
-                    itemSize: 20,
-                    itemPadding: EdgeInsets.zero,
-                    itemBuilder: (context, _) => const Icon(Icons.star,
-                        color: Color.fromRGBO(255, 239, 100, 1)),
-                    onRatingUpdate: (rating) {},
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Comment:  ',
-                style: GoogleFonts.inter(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
                 ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                // controller: reviewField,
-                decoration: InputDecoration(
-                  hintText: 'Enter Comment',
-                  hintStyle: GoogleFonts.inter(
-                      color: const Color.fromRGBO(212, 212, 212, 1)),
-                  contentPadding: const EdgeInsets.only(bottom: 30),
-                ),
-                onChanged: (value) {
-                  // review = value;
-                },
-              ),
-              // TextButton(
-              //     onPressed: () {
-              //       // reviews.add({
-              //       //   'review': review,
-              //       //   'user': user!.displayName,
-              //       //   'userPhoto': user.photoURL,
-              //       //   'spot': selectedSpot.spot!.name,
-              //       //   'rating': rating
-              //       // }).catchError((error) =>
-              //       //     debugPrint('Failed to add comment: $error'));
-
-              //       // reviewField.clear();
-              //     },
-              //
-              const SizedBox(height: 20),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  width: 150,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color.fromRGBO(93, 107, 230, 1),
-                        Color.fromRGBO(93, 230, 197, 1),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      //            reviews.add({
-                      // //       //   'review': review,
-                      // //       //   'user': user!.displayName,
-                      // //       //   'userPhoto': user.photoURL,
-                      // //       //   'spot': selectedSpot.spot!.name,
-                      // //       //   'rating': rating
-                      // //       // }).catchError((error) =>
-                      // //       //     debugPrint('Failed to add comment: $error'));
-
-                      // //       // reviewField.clear();
-                    },
-                    child: Text('Submit',
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          color: Colors.white,
-                        )),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
+        );
+      },
+    );
+  }
 }
