@@ -1,12 +1,17 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
+import 'package:touristop/providers/selected_bundle.dart';
+import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/theme/app_colors.dart';
+import 'package:touristop/utils/bundles.dart';
 
 class SelectionDialog extends ConsumerStatefulWidget {
   final bool isArrivalIncluded;
@@ -25,7 +30,8 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
   @override
   Widget build(BuildContext context) {
     final dates = ref.watch(datesProvider);
-    final bool isArrivalIncluded = widget.isArrivalIncluded;
+    final selectedBundles = ref.watch(selectedBundleProvider);
+    final userPosition = ref.watch(userLocationProvider);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -99,10 +105,6 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                         ),
                       ),
                       onPressed: () async {
-                        if (!isArrivalIncluded) {
-                          dates.datesList.removeAt(0);
-                        }
-
                         final finalDates = dates.datesList.map((e) =>
                             DatesList(dateTime: e.dateTime, timeRemaining: 8));
 
@@ -116,7 +118,15 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                         if (selected == 'Plan your own trip') {
                           Navigator.pushNamed(context, '/select/spots');
                         } else {
-                          Navigator.pushNamed(context, '/select/spots/cluster');
+                          for (var e in dates.datesList) {
+                            await Bundles.getBundleByDate(
+                              e.dateTime,
+                              selectedBundles,
+                              userPosition,
+                            );
+                          }
+
+                          Navigator.pushNamed(context, '/navigation');
                         }
                       },
                       child: Text(

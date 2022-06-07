@@ -86,7 +86,7 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                       },
                       child: SelectDateButton(
                         date: first,
-                        title: 'Arrival date',
+                        title: 'Start date',
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -111,8 +111,9 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                                     second!.difference(first!).inDays;
                                 dates.datesList.clear();
 
-                                for (var i = 0; i < daysBetween; i++) {
+                                for (var i = 0; i < daysBetween + 1; i++) {
                                   final date = first!.add(Duration(days: i));
+                                  debugPrint(date.toString());
 
                                   dates.datesList.add(
                                     DatesList(dateTime: date, timeRemaining: 8),
@@ -125,34 +126,10 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                       },
                       child: SelectDateButton(
                         date: second,
-                        title: 'Departure date',
+                        title: 'End date',
                       ),
                     ),
                     const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        RoundCheckBox(
-                          size: 30,
-                          checkedColor: AppColors.slime,
-                          border: Border.all(
-                            width: 2.0,
-                            color: isArrivalIncluded
-                                ? AppColors.slime
-                                : Colors.black,
-                          ),
-                          animationDuration: const Duration(microseconds: 0),
-                          isChecked: isArrivalIncluded,
-                          onTap: (value) {
-                            setState(() {
-                              isArrivalIncluded = value!;
-                            });
-                          },
-                        ),
-                        const SizedBox(width: 10),
-                        const Text(
-                            'Include date of arrival within the date of travel'),
-                      ],
-                    )
                   ],
                 ),
                 const SizedBox(height: 30),

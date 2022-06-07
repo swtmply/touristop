@@ -51,7 +51,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userLocation = ref.watch(userLocationProvider);
+    User? user = FirebaseAuth.instance.currentUser;
 
     return MaterialApp(
       title: 'Touristop',
@@ -72,7 +72,7 @@ class MyApp extends ConsumerWidget {
         '/login': (context) => const LoginScreen(),
         '/introduction': (context) => const Introduction(),
       },
-      initialRoute: '/introduction',
+      initialRoute: user == null ? '/introduction' : '/enable-location',
     );
   }
 }

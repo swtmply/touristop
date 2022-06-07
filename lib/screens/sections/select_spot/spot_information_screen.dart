@@ -393,22 +393,6 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                                       ),
                                     ),
                                   ),
-                                  // RatingBar.builder(
-                                  //   initialRating: 5,
-                                  //   minRating: 1,
-                                  //   direction: Axis.horizontal,
-                                  //   allowHalfRating: true,
-                                  //   itemCount: 5,
-                                  //   itemSize: 20,
-                                  //   itemPadding:
-                                  //       const EdgeInsets.symmetric(horizontal: 2),
-                                  //   itemBuilder: (context, _) => const Icon(
-                                  //       Icons.star,
-                                  //       color: Color.fromRGBO(255, 239, 100, 1)),
-                                  //   onRatingUpdate: (rating) {
-                                  //     // inspect(rating);
-                                  //   },
-                                  // ),
                                 ],
                               ),
                             ),
