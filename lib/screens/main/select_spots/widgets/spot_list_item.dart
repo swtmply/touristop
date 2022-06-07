@@ -67,6 +67,14 @@ class _SpotListItemState extends ConsumerState<SpotListItem> {
             width: double.infinity,
             height: 150,
             decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Color.fromRGBO(93, 107, 230, 1),
+                  Color.fromRGBO(93, 230, 197, 1),
+                ],
+              ),
               image: DecorationImage(
                 image: NetworkImage(widget.spot.image),
                 fit: BoxFit.cover,

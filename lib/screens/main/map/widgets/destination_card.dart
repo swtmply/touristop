@@ -22,7 +22,6 @@ class DestinationCard extends StatelessWidget {
     );
 
     if (response.statusCode == 200) {
-      inspect(jsonDecode(response.body));
       return Summary.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to load summary');

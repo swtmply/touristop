@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -32,6 +34,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   // ignore: todo
   // TODO add polylines
+  late PolylinePoints polylinePoints;
+  List<LatLng> polylineCoordinates = [];
+  Map<PolylineId, Polyline> polylines = {};
   // ignore: todo
   // TODO add realtime location
   // ignore: todo
@@ -112,6 +117,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             },
             zoomControlsEnabled: false,
             markers: _markers,
+            polylines: Set<Polyline>.of(polylines.values),
           ),
           Visibility(
             visible: selectedSpot != null,
@@ -143,11 +149,50 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               pageController: _pageController,
               spots: spots,
               moveCamera: moveCamera,
+              createPolyline: _createPolylines,
             ),
           )
         ],
       ),
     );
+  }
+
+  _createPolylines(LatLng userPosition, LatLng destination) async {
+    // Initializing PolylinePoints
+    polylinePoints = PolylinePoints();
+
+    // Generating the list of coordinates to be used for
+    // drawing the polylines
+    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+      'AIzaSyAjMSWhlbBDUTmEjl3sdBLFdTA6x0LbCCs', // Google Maps API Key
+      PointLatLng(userPosition.latitude, userPosition.longitude),
+      PointLatLng(destination.latitude, destination.longitude),
+      travelMode: TravelMode.driving,
+    );
+
+    // Adding the coordinates to the list
+    inspect(result);
+
+    if (result.points.isNotEmpty) {
+      setState(() {
+        for (var point in result.points) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        }
+
+        PolylineId id = PolylineId(destination.toString());
+
+        // Initializing Polyline
+        Polyline polyline = Polyline(
+          polylineId: id,
+          color: Colors.red,
+          points: polylineCoordinates,
+          width: 3,
+        );
+
+        // Adding the polyline to the map
+        polylines[id] = polyline;
+      });
+    }
   }
 
   makeMarker(LatLng position) {

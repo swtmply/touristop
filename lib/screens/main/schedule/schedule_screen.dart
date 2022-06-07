@@ -8,10 +8,17 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
+import 'package:touristop/providers/selected_spots.dart';
+import 'package:touristop/screens/sections/select_spot/spot_information_screen.dart';
 import 'package:touristop/theme/app_colors.dart';
 
 extension TimeOfDayExtension on TimeOfDay {
   TimeOfDay addHour(int hour) {
+    debugPrint(hour.runtimeType.toString());
+
+    if (hour.isNaN || hour.isNegative || this.hour + hour > 24) {
+      return replacing(hour: this.hour + 0, minute: minute);
+    }
     return replacing(hour: this.hour + hour, minute: minute);
   }
 }
@@ -85,6 +92,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     final dates = ref.watch(datesProvider);
+    final selectedSpots = ref.watch(selectedSpotsProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -114,9 +122,10 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                       width: double.infinity,
                       height: 110,
                       child: ListView(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          children: dates.datesList.map((e) {
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        children: dates.datesList.map(
+                          (e) {
                             return Container(
                               color: _selectedDate == e.dateTime
                                   ? AppColors.slime
@@ -149,184 +158,193 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                       padding: const EdgeInsets.only(
                                           left: 20, right: 20),
                                       child: Text(
-                                          DateFormat('E')
-                                              .format(e.dateTime)
-                                              .toString(),
-                                          style: GoogleFonts.inter(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w600,
-                                            color: _selectedDate == e.dateTime
-                                                ? Colors.white
-                                                : Colors.black,
-                                          )),
+                                        DateFormat('E')
+                                            .format(e.dateTime)
+                                            .toString(),
+                                        style: GoogleFonts.inter(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w600,
+                                          color: _selectedDate == e.dateTime
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                             );
-                          }).toList()),
+                          },
+                        ).toList(),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  _spotsList!.isEmpty
-                      ? const Center(
-                          child:
-                              Text('Please select tourist spots in this date.'),
-                        )
-                      : Expanded(
-                          child: ListView.builder(
-                            itemCount: _spotsList?.length,
-                            itemBuilder: (context, index) {
-                              _times.add(_times.last.addHour(_spotsList![index]
-                                  .spot
-                                  .numberOfHours
-                                  .toInt()));
-                              return Column(
-                                children: [
-                                  Text(_formatTime(_times[index])),
-                                  Slidable(
-                                    endActionPane: ActionPane(
-                                      extentRatio: 0.45,
-                                      motion: const ScrollMotion(),
-                                      children: [
-                                        SlidableAction(
-                                          onPressed: (context) {},
-                                          backgroundColor: const Color.fromRGBO(
-                                              93, 230, 197, 1),
-                                          foregroundColor: Colors.white,
-                                          icon: Icons.check_circle_outline,
-                                          label: 'Done',
-                                        ),
-                                        SlidableAction(
-                                          onPressed: (context) {},
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 249, 97, 97),
-                                          foregroundColor: Colors.white,
-                                          icon: Icons.cancel_outlined,
-                                          label: 'Delete',
-                                        ),
-                                      ],
+                  if (_spotsList!.isEmpty)
+                    const Center(
+                      child: Text('Please select tourist spots in this date.'),
+                    )
+                  else
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _spotsList?.length,
+                        itemBuilder: (context, index) {
+                          _times.add(_times.last.addHour(
+                              _spotsList![index].spot.numberOfHours.toInt()));
+                          return Column(
+                            children: [
+                              Text(_formatTime(_times[index])),
+                              InkWell(
+                                onTap: () {
+                                  selectedSpots
+                                      .setFirstSpot(_spotsList![index].spot);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SpotInformation(
+                                        spot: _spotsList![index].spot,
+                                      ),
                                     ),
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: 150,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                              _spotsList![index].spot.image),
-                                          fit: BoxFit.cover,
-                                          colorFilter: ColorFilter.mode(
-                                            const Color.fromARGB(255, 0, 0, 0)
-                                                .withOpacity(0.6),
-                                            BlendMode.darken,
-                                          ),
+                                  );
+                                },
+                                child: Slidable(
+                                  endActionPane: ActionPane(
+                                    extentRatio: 0.45,
+                                    motion: const ScrollMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (context) {},
+                                        backgroundColor: const Color.fromRGBO(
+                                            93, 230, 197, 1),
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.check_circle_outline,
+                                        label: 'Done',
+                                      ),
+                                      SlidableAction(
+                                        onPressed: (context) {},
+                                        backgroundColor: const Color.fromARGB(
+                                            255, 249, 97, 97),
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.cancel_outlined,
+                                        label: 'Delete',
+                                      ),
+                                    ],
+                                  ),
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 150,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                            _spotsList![index].spot.image),
+                                        fit: BoxFit.cover,
+                                        colorFilter: ColorFilter.mode(
+                                          const Color.fromARGB(255, 0, 0, 0)
+                                              .withOpacity(0.6),
+                                          BlendMode.darken,
                                         ),
                                       ),
-                                      child: Container(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 20),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 10),
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.5,
-                                                    child: Text(
-                                                      _spotsList![index]
-                                                          .spot
-                                                          .name,
-                                                      overflow:
-                                                          TextOverflow.clip,
-                                                      maxLines: 1,
-                                                      style: GoogleFonts.inter(
-                                                          color: Colors.white,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 22),
-                                                    ),
+                                    ),
+                                    child: Container(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                alignment: Alignment.centerLeft,
+                                                child: SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.5,
+                                                  child: Text(
+                                                    _spotsList![index]
+                                                        .spot
+                                                        .name,
+                                                    overflow: TextOverflow.clip,
+                                                    maxLines: 1,
+                                                    style: GoogleFonts.inter(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 22),
                                                   ),
-                                                ),
-                                                Container(
-                                                  alignment: Alignment.topLeft,
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 15, top: 10),
-                                                  child: RatingBar.builder(
-                                                    ignoreGestures: true,
-                                                    unratedColor:
-                                                        const Color.fromARGB(
-                                                            100, 255, 241, 114),
-                                                    initialRating:
-                                                        _spotsList![index]
-                                                                .spot
-                                                                .averageRating!
-                                                                .isNaN
-                                                            ? 0
-                                                            : _spotsList![index]
-                                                                .spot
-                                                                .averageRating!,
-                                                    direction: Axis.horizontal,
-                                                    allowHalfRating: true,
-                                                    itemCount: 5,
-                                                    itemSize: 25,
-                                                    itemPadding:
-                                                        const EdgeInsets
-                                                                .symmetric(
-                                                            horizontal: 2),
-                                                    itemBuilder: (context, _) =>
-                                                        const Icon(
-                                                      Icons.star,
-                                                      color: Color.fromRGBO(
-                                                          255, 239, 100, 1),
-                                                    ),
-                                                    onRatingUpdate: (rating) {},
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Container(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10, right: 30),
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                _spotsList![index]
-                                                    .spot
-                                                    .description,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                                style: GoogleFonts.inter(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 16,
                                                 ),
                                               ),
+                                              Container(
+                                                alignment: Alignment.topLeft,
+                                                padding: const EdgeInsets.only(
+                                                    left: 15, top: 10),
+                                                child: RatingBar.builder(
+                                                  ignoreGestures: true,
+                                                  unratedColor:
+                                                      const Color.fromARGB(
+                                                          100, 255, 241, 114),
+                                                  initialRating:
+                                                      _spotsList![index]
+                                                              .spot
+                                                              .averageRating!
+                                                              .isNaN
+                                                          ? 0
+                                                          : _spotsList![index]
+                                                              .spot
+                                                              .averageRating!,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: true,
+                                                  itemCount: 5,
+                                                  itemSize: 25,
+                                                  itemPadding: const EdgeInsets
+                                                      .symmetric(horizontal: 2),
+                                                  itemBuilder: (context, _) =>
+                                                      const Icon(
+                                                    Icons.star,
+                                                    color: Color.fromRGBO(
+                                                        255, 239, 100, 1),
+                                                  ),
+                                                  onRatingUpdate: (rating) {},
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Container(
+                                            padding: const EdgeInsets.only(
+                                                left: 10, right: 30),
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              _spotsList![index]
+                                                  .spot
+                                                  .description,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                              style: GoogleFonts.inter(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 16,
+                                              ),
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 20,
-                                  )
-                                ],
-                              );
-                            },
-                          ),
-                        )
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              )
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                 ],
               ),
             ),

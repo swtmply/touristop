@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
+import 'package:touristop/providers/user_location.dart';
 
 class FloatingCards extends ConsumerWidget {
   const FloatingCards({
@@ -14,15 +15,19 @@ class FloatingCards extends ConsumerWidget {
     required this.spots,
     required this.onSpotSelect,
     required this.moveCamera,
+    required this.createPolyline,
   }) : super(key: key);
 
   final PageController pageController;
   final List<SpotsList> spots;
   final Function onSpotSelect;
   final Function moveCamera;
+  final Function createPolyline;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final userLocation = ref.watch(userLocationProvider);
+
     return Positioned(
       bottom: 20.0,
       child: SizedBox(
@@ -55,6 +60,17 @@ class FloatingCards extends ConsumerWidget {
                   spots[index].spot.position!.latitude,
                   spots[index].spot.position!.longitude,
                 );
+                createPolyline(
+                  LatLng(
+                    userLocation.position?.latitude ?? 14.5995,
+                    userLocation.position?.longitude ?? 120.9842,
+                  ),
+                  LatLng(
+                    spots[index].spot.position!.latitude,
+                    spots[index].spot.position!.longitude,
+                  ),
+                );
+
                 moveCamera(position);
               },
               child: Container(
