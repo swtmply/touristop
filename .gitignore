@@ -46,3 +46,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .vs/Touristop/v15/.suo
+
+# keystore
+*.jks

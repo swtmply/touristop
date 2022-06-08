@@ -148,11 +148,7 @@ class Introduction extends StatelessWidget {
         onDone: () async {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(
-              builder: (context) => user == null
-                  ? const LoginScreen()
-                  : const EnableLocationScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
             (Route<dynamic> route) => false,
           );
         },

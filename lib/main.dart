@@ -11,7 +11,6 @@ import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/models/selected_spots/selected_spots_model.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
-import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/screens/main/map/map_screen.dart';
 import 'package:touristop/screens/main/schedule/schedule_screen.dart';
 import 'package:touristop/screens/main/select_dates/select_dates_screen.dart';

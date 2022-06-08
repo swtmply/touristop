@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "997576782837-suc6aa9hjop31cfs5ljqirmlfls4en4g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.touristop",
+            "certificate_hash": "a71aedca48ee641c791f96f14a9010daf4f4e3e3"
+          }
+        },
+        {
           "client_id": "997576782837-cqpsk1qn99c6jderre402b4f8j3uqv73.apps.googleusercontent.com",
           "client_type": 3
         }
