@@ -5,6 +5,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/providers/selected_spots.dart';
 import 'package:touristop/screens/sections/select_spot/all_spot_reviews_screen.dart';
@@ -19,10 +21,21 @@ class SpotReviews extends ConsumerStatefulWidget {
 
 class _SpotReviewsState extends ConsumerState<SpotReviews> {
   final reviewField = TextEditingController();
+  final spotsBox = Hive.box<SpotsList>('spots');
 
   String review = '';
   double rating = 0;
   late TouristSpot spot;
+
+  bool _checkIsDone(String name) {
+    for (var list in spotsBox.values) {
+      if (list.spot.name == name && list.isDone == true) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,29 +72,32 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                     ),
                   ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    ratingDialog(context);
-                  },
-                  child: Row(
-                    children: [
-                      const FaIcon(
-                        FontAwesomeIcons.plus,
-                        color: Colors.black,
-                        size: 20,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Add Review',
-                        style: GoogleFonts.inter(
+                Visibility(
+                  visible: _checkIsDone(spot.name),
+                  child: TextButton(
+                    onPressed: () {
+                      ratingDialog(context);
+                    },
+                    child: Row(
+                      children: [
+                        const FaIcon(
+                          FontAwesomeIcons.plus,
                           color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                          size: 20,
                         ),
-                      ),
-                    ],
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          'Add Review',
+                          style: GoogleFonts.inter(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],

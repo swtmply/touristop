@@ -1,7 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,8 +8,10 @@ import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_bundle.dart';
 import 'package:touristop/providers/user_location.dart';
+import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
 import 'package:touristop/theme/app_colors.dart';
 import 'package:touristop/utils/bundles.dart';
+import 'package:touristop/utils/navigation.dart';
 
 class SelectionDialog extends ConsumerStatefulWidget {
   final bool isArrivalIncluded;
@@ -59,7 +59,7 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                 SelectionCard(
                   title: 'Plan your own trip',
                   body:
-                      'Choose a date and pick the tourist spots you want to go to.',
+                      'Choose a date/s and pick the tourist spots you want to go to.',
                   selected: selected,
                   onClick: (value) {
                     setState(() {
@@ -71,7 +71,7 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                 SelectionCard(
                   title: 'Let us plan it for you',
                   body:
-                      'Choose the tourist spots you want to go to and we will handle the dates for you.',
+                      'Sit back and relax. The application will generate everything for you',
                   selected: selected,
                   onClick: (value) {
                     setState(() {
@@ -116,7 +116,11 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
 
                         dates.setSelectedDate(dates.datesList.first);
                         if (selected == 'Plan your own trip') {
-                          Navigator.pushNamed(context, '/select/spots');
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => const SelectSpotsScreen(),
+                            ),
+                          );
                         } else {
                           for (var e in dates.datesList) {
                             await Bundles.getBundleByDate(
@@ -126,7 +130,11 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                             );
                           }
 
-                          Navigator.pushNamed(context, '/navigation');
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => const Navigation(),
+                            ),
+                          );
                         }
                       },
                       child: Text(

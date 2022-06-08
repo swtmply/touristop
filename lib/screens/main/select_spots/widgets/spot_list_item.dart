@@ -160,6 +160,7 @@ class _SpotListItemState extends ConsumerState<SpotListItem> {
                         final spotItem = SpotsList(
                           spot: widget.spot,
                           date: widget.selectedDate,
+                          isDone: false,
                           isSelected: true,
                         );
 

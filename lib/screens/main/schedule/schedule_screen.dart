@@ -12,17 +12,6 @@ import 'package:touristop/providers/selected_spots.dart';
 import 'package:touristop/screens/sections/select_spot/spot_information_screen.dart';
 import 'package:touristop/theme/app_colors.dart';
 
-extension TimeOfDayExtension on TimeOfDay {
-  TimeOfDay addHour(int hour) {
-    debugPrint(hour.runtimeType.toString());
-
-    if (hour.isNaN || hour.isNegative || this.hour + hour > 24) {
-      return replacing(hour: this.hour + 0, minute: minute);
-    }
-    return replacing(hour: this.hour + hour, minute: minute);
-  }
-}
-
 class ScheduleScreen extends ConsumerStatefulWidget {
   const ScheduleScreen({Key? key}) : super(key: key);
 
@@ -35,7 +24,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
   final spotsBox = Hive.box<SpotsList>('spots');
   DateTime? _selectedDate;
   List<SpotsList>? _spotsList;
-  final List<TimeOfDay> _times = [];
+  final List<DateTime> _times = [];
 
   List<SpotsList> _generateSpots(DateTime? date) {
     final spots = spotsBox.values.where((spotBox) {
@@ -61,26 +50,12 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       return toDouble(todA) > toDouble(todB) ? 1 : 0;
     });
 
-    _times.add(const TimeOfDay(hour: 8, minute: 0));
+    final now = DateTime.now();
+    _times.add(
+        DateTime(now.year, now.month, now.day).add(const Duration(hours: 8)));
 
     return spots;
   }
-
-  TimeOfDay _toTimeOfDay(String time) {
-    return TimeOfDay(
-        hour: int.parse(time.split(":")[0]),
-        minute: int.parse(time.split(":")[1]));
-  }
-
-  String _formatTime(TimeOfDay time) {
-    final now = DateTime.now();
-    DateTime dt =
-        DateTime(now.year, now.month, now.day, time.hour, time.minute);
-
-    return DateFormat.jm().format(dt).toString();
-  }
-
-  double toDouble(TimeOfDay time) => time.hour + time.minute / 60.0;
 
   @override
   void initState() {
@@ -102,14 +77,16 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Schedule',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 32,
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                    child: Text(
+                      'Schedule',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 32,
+                      ),
                     ),
                   ),
-                  // Text(_times.map((e) => e.toString()).toString()),
                   const SizedBox(height: 20),
                   Container(
                     padding: const EdgeInsets.all(3),
@@ -145,14 +122,16 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                         left: 20,
                                         right: 20,
                                       ),
-                                      child: Text('${e.dateTime.day}',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 44,
-                                            fontWeight: FontWeight.bold,
-                                            color: _selectedDate == e.dateTime
-                                                ? Colors.white
-                                                : Colors.black,
-                                          )),
+                                      child: Text(
+                                        '${e.dateTime.day}',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 44,
+                                          fontWeight: FontWeight.bold,
+                                          color: _selectedDate == e.dateTime
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
                                     ),
                                     Container(
                                       padding: const EdgeInsets.only(
@@ -189,11 +168,22 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                       child: ListView.builder(
                         itemCount: _spotsList?.length,
                         itemBuilder: (context, index) {
-                          _times.add(_times.last.addHour(
-                              _spotsList![index].spot.numberOfHours.toInt()));
+                          _addTime(
+                              _spotsList![index].spot.numberOfHours.toInt());
                           return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(_formatTime(_times[index])),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  _dateToTime(_times[index]),
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
                               InkWell(
                                 onTap: () {
                                   selectedSpots
@@ -213,7 +203,11 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                     motion: const ScrollMotion(),
                                     children: [
                                       SlidableAction(
-                                        onPressed: (context) {},
+                                        onPressed: (context) {
+                                          _spotsList![index].isDone = true;
+
+                                          setState(() {});
+                                        },
                                         backgroundColor: const Color.fromRGBO(
                                             93, 230, 197, 1),
                                         foregroundColor: Colors.white,
@@ -353,4 +347,20 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
       ),
     );
   }
+
+  TimeOfDay _toTimeOfDay(String time) {
+    return TimeOfDay(
+        hour: int.parse(time.split(":")[0]),
+        minute: int.parse(time.split(":")[1]));
+  }
+
+  void _addTime(int hour) {
+    _times.add(_times.last.add(Duration(hours: hour)));
+  }
+
+  String _dateToTime(DateTime date) {
+    return DateFormat.jm().format(date).toString();
+  }
+
+  double toDouble(TimeOfDay time) => time.hour + time.minute / 60.0;
 }
