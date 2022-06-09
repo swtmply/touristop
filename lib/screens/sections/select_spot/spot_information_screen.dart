@@ -10,6 +10,7 @@ import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_plan_provider.dart';
+import 'package:touristop/providers/selected_spots.dart';
 import 'package:touristop/providers/spots_provider.dart';
 import 'package:touristop/screens/main/map/pin_map_screen.dart';
 
@@ -289,6 +290,9 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
+                          final selectedSpot = ref.watch(selectedSpotsProvider);
+                          selectedSpot.setFirstSpot(spot);
+
                           Navigator.pushNamed(
                             context,
                             '/selected/spot/reviews',
