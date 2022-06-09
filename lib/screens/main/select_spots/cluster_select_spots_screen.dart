@@ -249,6 +249,7 @@ class _ClusterSpotListItem extends ConsumerState<ClusterSpotListItem> {
           MaterialPageRoute(
             builder: (context) => SpotInformation(
               spot: widget.spot,
+              isSelectable: false,
             ),
           ),
         );

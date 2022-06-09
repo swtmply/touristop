@@ -5,12 +5,12 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
-import 'package:touristop/providers/selected_spots.dart';
+import 'package:touristop/screens/sections/select_spot/spot_information_screen.dart';
 
 class DestinationInformation extends ConsumerWidget {
   const DestinationInformation({
     Key? key,
-    this.selectedSpot,
+    required this.selectedSpot,
     required this.onClose,
   }) : super(key: key);
 
@@ -19,8 +19,6 @@ class DestinationInformation extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final spot = ref.watch(selectedSpotsProvider);
-
     return Positioned(
       bottom: 0,
       child: SizedBox(
@@ -130,8 +128,15 @@ class DestinationInformation extends ConsumerWidget {
                           ),
                         ),
                         onPressed: () {
-                          spot.setFirstSpot(selectedSpot!);
-                          Navigator.pushNamed(context, '/selected/spot');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SpotInformation(
+                                spot: selectedSpot!,
+                                isSelectable: false,
+                              ),
+                            ),
+                          );
                         },
                         child: Text('Read more..',
                             style: GoogleFonts.inter(

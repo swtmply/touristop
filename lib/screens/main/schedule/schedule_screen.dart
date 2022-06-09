@@ -193,6 +193,8 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                     MaterialPageRoute(
                                       builder: (context) => SpotInformation(
                                         spot: _spotsList![index].spot,
+                                        isSelectable: false,
+                                        isSchedule: true,
                                       ),
                                     ),
                                   );

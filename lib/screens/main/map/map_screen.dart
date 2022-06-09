@@ -99,7 +99,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 _onSpotSelect(selected.firstSpot);
               }
 
-              if (selected.firstSpot == null) {
+              if (selected.firstSpot != null) {
                 _createPolylines(
                   userPosition,
                   LatLng(
@@ -164,7 +164,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   _removePolylines() {
     setState(() {
-      polylines = {};
+      polylines.clear();
+      polylineCoordinates.clear();
     });
   }
 

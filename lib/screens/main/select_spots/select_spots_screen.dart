@@ -11,8 +11,8 @@ import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:touristop/providers/dates_provider.dart';
+import 'package:touristop/providers/selected_spots.dart';
 import 'package:touristop/providers/spots_provider.dart';
-import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/screens/main/select_spots/widgets/app_dropdown.dart';
 import 'package:touristop/screens/main/select_spots/widgets/spot_list_item.dart';
 import 'package:touristop/theme/app_colors.dart';
@@ -35,11 +35,11 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
 
   late DatesList currentDate;
   late double timeRemaining;
-  late String day;
 
   @override
   Widget build(BuildContext context) {
     final selectedDates = ref.watch(datesProvider);
+    final selectedSpots = ref.watch(selectedSpotsProvider);
     final allSpots = ref.watch(spotsProvider);
 
     setState(() {
@@ -47,7 +47,6 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
       final dateInBox = selectedDates.findByDate(currentDate.dateTime);
 
       timeRemaining = dateInBox!.timeRemaining;
-      day = DateFormat('E').format(currentDate.dateTime).toString();
     });
 
     return Scaffold(
@@ -56,6 +55,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
         backgroundColor: AppColors.coldBlue,
         label: const Text('Continue'),
         onPressed: () {
+          selectedSpots.setNull();
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => const Navigation(),
@@ -87,9 +87,10 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                       style: GoogleFonts.inter(
                           fontSize: 32, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                        'Note: Please select a tourist spot for each date.'),
+                    const SizedBox(height: 10),
                     AppDropdown(
                       value: DateFormat('yMd').format(currentDate.dateTime),
                       hint: 'Select Dates:',
@@ -108,9 +109,6 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                         });
                       },
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
                   ],
                 ),
               ),
@@ -126,8 +124,9 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
 
   Widget _buildListView(List<TouristSpot> spots) {
     List<TouristSpot> touristSpots = spots.where((element) {
-      final found =
-          element.dates.firstWhereOrNull((element) => element['date'] == day);
+      final found = element.dates.firstWhereOrNull((element) =>
+          element['date'] ==
+          DateFormat('E').format(currentDate.dateTime).toString());
 
       if (found != null) {
         return true;

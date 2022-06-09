@@ -11,6 +11,7 @@ import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_bundle.dart';
+import 'package:touristop/providers/selected_plan_provider.dart';
 import 'package:touristop/providers/spots_provider.dart';
 import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
@@ -42,6 +43,7 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
     final selectedBundles = ref.watch(selectedBundleProvider);
     final userPosition = ref.watch(userLocationProvider);
     final allSpots = ref.watch(spotsProvider);
+    final userPlan = ref.watch(planProvider);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -176,6 +178,8 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
 
                               dates.setSelectedDate(dates.datesList.first);
                               if (selected == 'Plan your own trip') {
+                                userPlan.setPlan(selected);
+
                                 Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
                                     builder: (context) =>
@@ -184,6 +188,8 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                                   (Route<dynamic> router) => false,
                                 );
                               } else {
+                                userPlan.setPlan(selected);
+
                                 setState(() {
                                   _isLoading = true;
                                 });

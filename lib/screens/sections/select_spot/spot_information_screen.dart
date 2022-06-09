@@ -5,18 +5,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
-import 'package:touristop/providers/selected_spots.dart';
+import 'package:touristop/providers/selected_plan_provider.dart';
 import 'package:touristop/providers/spots_provider.dart';
+import 'package:touristop/screens/main/map/pin_map_screen.dart';
 
 class SpotInformation extends ConsumerStatefulWidget {
   final TouristSpot spot;
+  final bool isSelectable;
+  final bool? isSchedule;
 
   const SpotInformation({
     Key? key,
     required this.spot,
+    required this.isSelectable,
+    this.isSchedule,
   }) : super(key: key);
 
   @override
@@ -34,8 +40,12 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
   Widget build(BuildContext context) {
     final spot = widget.spot;
     final selectedDates = ref.watch(datesProvider);
-    final selectedSpots = ref.watch(selectedSpotsProvider);
+    final userPlan = ref.watch(planProvider);
     final allSpots = ref.watch(spotsProvider);
+    final dates = ref.watch(datesProvider);
+    final datesBox = Hive.box<DatesList>('dates');
+    final datesListItem =
+        datesBox.get(dates.toDateKey(selectedDates.selectedDate!.dateTime));
 
     setState(() {
       spotKey = '${spot.name}${selectedDates.selectedDate!.dateTime}';
@@ -193,7 +203,14 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                         color: Colors.white,
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushNamed(context, '/map');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PinMapScreen(
+                                  spot: spot,
+                                ),
+                              ),
+                            );
                           },
                           child: Column(
                             // mainAxisAlignment: MainAxisAlignment.center,
@@ -215,52 +232,57 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          final spotItem = SpotsList(
-                            spot: spot,
-                            date: selectedDates.selectedDate!.dateTime,
-                          );
+                    Visibility(
+                      visible: userPlan.plan == 'Plan your own trip',
+                      child: Expanded(
+                        child: InkWell(
+                          onTap: widget.isSelectable
+                              ? () {
+                                  final spotItem = SpotsList(
+                                    spot: spot,
+                                    date: selectedDates.selectedDate!.dateTime,
+                                  );
 
-                          setState(() {
-                            if (isSelected) {
-                              spotsBox.delete(spotKey);
-                            } else {
-                              spotsBox.put(
-                                spotKey,
-                                spotItem,
-                              );
-                            }
+                                  setState(() {
+                                    if (isSelected) {
+                                      spotsBox.delete(spotKey);
+                                    } else {
+                                      spotsBox.put(
+                                        spotKey,
+                                        spotItem,
+                                      );
+                                    }
 
-                            isSelected = !isSelected;
-                          });
-                        },
-                        child: Column(
-                          children: <Widget>[
-                            isSelected
-                                ? const Icon(
-                                    Icons.close,
-                                    color: Color.fromRGBO(130, 130, 130, 1),
-                                    size: 30,
-                                  )
-                                : const Icon(
-                                    Icons.add,
-                                    color: Color.fromRGBO(130, 130, 130, 1),
-                                    size: 30,
-                                  ),
-                            Text(
-                              spotsBox.containsKey(
-                                      '${spot.name}${selectedDates.selectedDate}')
-                                  ? 'Remove to Schedule'
-                                  : "Add to Schedule",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.inter(
-                                  fontSize: 16,
-                                  color:
-                                      const Color.fromRGBO(130, 130, 130, 1)),
-                            ),
-                          ],
+                                    isSelected = !isSelected;
+                                  });
+                                }
+                              : null,
+                          child: Column(
+                            children: <Widget>[
+                              isSelected
+                                  ? const Icon(
+                                      Icons.close,
+                                      color: Color.fromRGBO(130, 130, 130, 1),
+                                      size: 30,
+                                    )
+                                  : const Icon(
+                                      Icons.add,
+                                      color: Color.fromRGBO(130, 130, 130, 1),
+                                      size: 30,
+                                    ),
+                              Text(
+                                spotsBox.containsKey(
+                                        '${spot.name}${selectedDates.selectedDate}')
+                                    ? 'Remove to Schedule'
+                                    : "Add to Schedule",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    color:
+                                        const Color.fromRGBO(130, 130, 130, 1)),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -328,89 +350,98 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                 const SizedBox(
                   height: 40,
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  width: double.infinity,
-                  height: 330,
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: allSpots.spots.length,
-                    itemBuilder: (context, index) {
-                      final data = allSpots.spots[index];
+                Visibility(
+                  visible:
+                      widget.isSchedule == false || widget.isSchedule == null,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    width: double.infinity,
+                    height: 330,
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: allSpots.spots.length,
+                      itemBuilder: (context, index) {
+                        final data = allSpots.spots[index];
 
-                      if (data.name == widget.spot.name) {
-                        return Container();
-                      }
+                        bool isSelectable = datesListItem!.timeRemaining -
+                                allSpots.spots[index].numberOfHours >=
+                            0;
 
-                      return InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SpotInformation(
-                                spot: data,
+                        if (data.name == widget.spot.name) {
+                          return Container();
+                        }
+
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SpotInformation(
+                                  spot: data,
+                                  isSelectable: isSelectable,
+                                ),
                               ),
+                            );
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 200,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    child: Image.network(
+                                      data.image,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.35,
+                                      fit: BoxFit.fitHeight,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                SizedBox(
+                                  width: 120,
+                                  child: Text(
+                                    data.name,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                RatingBar.builder(
+                                  initialRating: data.averageRating!,
+                                  ignoreGestures: true,
+                                  unratedColor:
+                                      const Color.fromARGB(100, 255, 241, 114),
+                                  minRating: 1,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemSize: 25,
+                                  itemPadding:
+                                      const EdgeInsets.symmetric(horizontal: 2),
+                                  itemBuilder: (context, _) => const Icon(
+                                      Icons.star,
+                                      color: Color.fromRGBO(255, 239, 100, 1)),
+                                  onRatingUpdate: (rating) {
+                                    debugPrint(rating.toString());
+                                  },
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 200,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.network(
-                                    data.image,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.35,
-                                    fit: BoxFit.fitHeight,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              SizedBox(
-                                width: 120,
-                                child: Text(
-                                  data.name,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              RatingBar.builder(
-                                initialRating: data.averageRating!,
-                                ignoreGestures: true,
-                                unratedColor:
-                                    const Color.fromARGB(100, 255, 241, 114),
-                                minRating: 1,
-                                direction: Axis.horizontal,
-                                allowHalfRating: true,
-                                itemCount: 5,
-                                itemSize: 25,
-                                itemPadding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                itemBuilder: (context, _) => const Icon(
-                                    Icons.star,
-                                    color: Color.fromRGBO(255, 239, 100, 1)),
-                                onRatingUpdate: (rating) {
-                                  debugPrint(rating.toString());
-                                },
-                              ),
-                            ],
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],

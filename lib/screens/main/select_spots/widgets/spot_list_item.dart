@@ -59,6 +59,7 @@ class _SpotListItemState extends ConsumerState<SpotListItem> {
           MaterialPageRoute(
             builder: (context) => SpotInformation(
               spot: widget.spot,
+              isSelectable: isSelectable,
             ),
           ),
         );

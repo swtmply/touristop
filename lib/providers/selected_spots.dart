@@ -9,6 +9,11 @@ class SelectedSpotsProvider extends ChangeNotifier {
   TouristSpot? get firstSpot => _firstSpot;
   TouristSpot? get secondSpot => _secondSpot;
 
+  void setNull() {
+    _firstSpot = null;
+    notifyListeners();
+  }
+
   void setFirstSpot(TouristSpot spot) {
     _firstSpot = spot;
     notifyListeners();
