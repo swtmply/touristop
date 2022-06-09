@@ -378,22 +378,27 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                     ),
                     child: TextButton(
                       onPressed: () {
-                        reviews.add({
-                          'review': review,
-                          'user': user!.displayName,
-                          'userPhoto': user.photoURL,
-                          'spot': spot.name,
-                          'rating': rating
-                        }).catchError((error) =>
-                            debugPrint('Failed to add comment: $error'));
+                        if (rating != 0.0 || review.isNotEmpty) {
+                          reviews.add({
+                            'review': review,
+                            'user': user!.displayName,
+                            'userPhoto': user.photoURL,
+                            'spot': spot.name,
+                            'rating': rating
+                          }).catchError((error) =>
+                              debugPrint('Failed to add comment: $error'));
 
-                        reviewField.clear();
+                          Navigator.pop(context);
+                          reviewField.clear();
+                        }
                       },
-                      child: Text('Submit',
-                          style: GoogleFonts.inter(
-                            fontSize: 16,
-                            color: Colors.white,
-                          )),
+                      child: Text(
+                        'Submit',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ),

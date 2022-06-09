@@ -8,9 +8,11 @@ import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/providers/selected_spots.dart';
 
 class DestinationInformation extends ConsumerWidget {
-  const DestinationInformation(
-      {Key? key, this.selectedSpot, required this.onClose})
-      : super(key: key);
+  const DestinationInformation({
+    Key? key,
+    this.selectedSpot,
+    required this.onClose,
+  }) : super(key: key);
 
   final TouristSpot? selectedSpot;
   final Function onClose;
@@ -26,17 +28,7 @@ class DestinationInformation extends ConsumerWidget {
         width: MediaQuery.of(context).size.width,
         child: Container(
           color: Colors.white,
-          // child: Row(
-          //   children: [
-          //     Text(selectedSpot?.name ?? "No selected spot"),
-          //     TextButton(
-          //       onPressed: () => onClose(),
-          //       child: Icon(Icons.close),
-          //     ),
-          //   ],
-          // ),
           padding: const EdgeInsets.symmetric(horizontal: 10),
-
           child: Row(
             children: [
               Container(
@@ -47,10 +39,11 @@ class DestinationInformation extends ConsumerWidget {
                   color: Colors.pink,
                   borderRadius: BorderRadius.circular(8),
                   image: DecorationImage(
-                      image: NetworkImage(
-                        selectedSpot!.image,
-                      ),
-                      fit: BoxFit.cover),
+                    image: NetworkImage(
+                      selectedSpot!.image,
+                    ),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               const SizedBox(

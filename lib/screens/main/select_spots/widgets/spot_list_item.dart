@@ -17,8 +17,11 @@ class SpotListItem extends ConsumerStatefulWidget {
   final TouristSpot spot;
   final DateTime selectedDate;
 
-  const SpotListItem({Key? key, required this.spot, required this.selectedDate})
-      : super(key: key);
+  const SpotListItem({
+    Key? key,
+    required this.spot,
+    required this.selectedDate,
+  }) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SpotListItemState();

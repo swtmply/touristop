@@ -9,10 +9,15 @@ import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_spots.dart';
+import 'package:touristop/providers/spots_provider.dart';
 
 class SpotInformation extends ConsumerStatefulWidget {
   final TouristSpot spot;
-  const SpotInformation({Key? key, required this.spot}) : super(key: key);
+
+  const SpotInformation({
+    Key? key,
+    required this.spot,
+  }) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -30,6 +35,7 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
     final spot = widget.spot;
     final selectedDates = ref.watch(datesProvider);
     final selectedSpots = ref.watch(selectedSpotsProvider);
+    final allSpots = ref.watch(spotsProvider);
 
     setState(() {
       spotKey = '${spot.name}${selectedDates.selectedDate!.dateTime}';
@@ -129,14 +135,17 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                             children: <TextSpan>[
                               const TextSpan(text: 'Open  '),
                               TextSpan(
-                                  text: 'Mon-Wed-Fri  ',
+                                  text:
+                                      '${spot.dates.first['date']}-${spot.dates.last['date']}  ',
                                   style: GoogleFonts.inter(
                                     color:
                                         const Color.fromRGBO(93, 107, 230, 1),
                                   )),
                               const TextSpan(text: '\u2022  '),
                               TextSpan(
-                                  text: '8:00 AM to 7:00 PM ',
+                                  text: spot.dates.first['timeOpen'] == '6:00AM'
+                                      ? 'Open 24 Hours'
+                                      : '${spot.dates.first['timeOpen']} to ${spot.dates.first['timeClose']} ',
                                   style: GoogleFonts.inter(
                                     color:
                                         const Color.fromRGBO(93, 230, 197, 1),
@@ -319,88 +328,90 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                 const SizedBox(
                   height: 40,
                 ),
-                StreamBuilder<QuerySnapshot>(
-                  stream: spotsCollection
-                      .where('type', isEqualTo: spot.type)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      );
-                    }
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  width: double.infinity,
+                  height: 330,
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: allSpots.spots.length,
+                    itemBuilder: (context, index) {
+                      final data = allSpots.spots[index];
 
-                    final data = snapshot.requireData;
-                    final docs = data.docs;
+                      if (data.name == widget.spot.name) {
+                        return Container();
+                      }
 
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      width: double.infinity,
-                      height: 300,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: docs.length,
-                        itemBuilder: (context, index) {
-                          final data =
-                              docs[index].data() as Map<String, dynamic>;
-
-                          if (data['name'] == widget.spot.name) {
-                            return Container();
-                          }
-
-                          return InkWell(
-                            onTap: () {
-                              selectedSpots.setFirstSpot(widget.spot);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SpotInformation(
-                                    spot: widget.spot,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(right: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: 200,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                      child: Image.network(
-                                        data['image'],
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.35,
-                                        fit: BoxFit.fitHeight,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    width: 100,
-                                    child: Text(
-                                      data['name'],
-                                      style: GoogleFonts.inter(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SpotInformation(
+                                spot: data,
                               ),
                             ),
                           );
                         },
-                      ),
-                    );
-                  },
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 200,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  child: Image.network(
+                                    data.image,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.35,
+                                    fit: BoxFit.fitHeight,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              SizedBox(
+                                width: 120,
+                                child: Text(
+                                  data.name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              RatingBar.builder(
+                                initialRating: data.averageRating!,
+                                ignoreGestures: true,
+                                unratedColor:
+                                    const Color.fromARGB(100, 255, 241, 114),
+                                minRating: 1,
+                                direction: Axis.horizontal,
+                                allowHalfRating: true,
+                                itemCount: 5,
+                                itemSize: 25,
+                                itemPadding:
+                                    const EdgeInsets.symmetric(horizontal: 2),
+                                itemBuilder: (context, _) => const Icon(
+                                    Icons.star,
+                                    color: Color.fromRGBO(255, 239, 100, 1)),
+                                onRatingUpdate: (rating) {
+                                  debugPrint(rating.toString());
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             )

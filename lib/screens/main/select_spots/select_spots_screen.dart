@@ -11,6 +11,7 @@ import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:touristop/providers/dates_provider.dart';
+import 'package:touristop/providers/spots_provider.dart';
 import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/screens/main/select_spots/widgets/app_dropdown.dart';
 import 'package:touristop/screens/main/select_spots/widgets/spot_list_item.dart';
@@ -29,32 +30,24 @@ class SelectSpotsScreen extends ConsumerStatefulWidget {
 }
 
 class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
-  final Stream<QuerySnapshot> spots =
-      FirebaseFirestore.instance.collection('spots').snapshots();
+  final datesBox = Hive.box<DatesList>('dates');
+  final spotsList = Hive.box<SpotsList>('spots');
 
   late DatesList currentDate;
   late double timeRemaining;
-  late Future<List<TouristSpot>> Function(
-      List<QueryDocumentSnapshot<Object?>>, Position) _docsToTouristSpotList;
-
-  @override
-  void initState() {
-    super.initState();
-    _docsToTouristSpotList = docsToTouristSpotList;
-  }
+  late String day;
 
   @override
   Widget build(BuildContext context) {
-    final datesBox = Hive.box<DatesList>('dates');
-    final spotsList = Hive.box<SpotsList>('spots');
-    final location = ref.watch(userLocationProvider);
     final selectedDates = ref.watch(datesProvider);
+    final allSpots = ref.watch(spotsProvider);
 
     setState(() {
       currentDate = selectedDates.selectedDate!;
       final dateInBox = selectedDates.findByDate(currentDate.dateTime);
 
       timeRemaining = dateInBox!.timeRemaining;
+      day = DateFormat('E').format(currentDate.dateTime).toString();
     });
 
     return Scaffold(
@@ -73,137 +66,106 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
       ),
       body: SizedBox(
         height: double.infinity,
-        child: StreamBuilder<QuerySnapshot>(
-          stream: spots,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Something went wrong in the stream provided');
-            }
-
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator.adaptive());
-            }
-
-            final docs = snapshot.requireData.docs;
-
-            return SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 40,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 40,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Select places to go to',
+                      style: GoogleFonts.inter(
+                          fontSize: 32, fontWeight: FontWeight.bold),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Select places to go to',
-                          style: GoogleFonts.inter(
-                              fontSize: 32, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        AppDropdown(
-                          value: DateFormat('yMd').format(currentDate.dateTime),
-                          hint: 'Select Dates:',
-                          listItems: selectedDates.datesList.map((date) {
-                            return {
-                              'value': date.dateTime,
-                              'text': DateFormat('yMd').format(date.dateTime)
-                            };
-                          }).toList(),
-                          onChanged: (value) {
-                            final date = datesBox.get(
-                                DateFormat('yMd').format(value).toString());
-
-                            setState(() {
-                              selectedDates.setSelectedDate(date!);
-                            });
-                          },
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                      ],
+                    const SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  Expanded(
-                    child: FutureBuilder(
-                      future: _docsToTouristSpotList(docs, location.position!),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          final day = DateFormat('E')
-                              .format(currentDate.dateTime)
-                              .toString();
-                          final data = snapshot.data as List<TouristSpot>;
-                          List<TouristSpot> touristSpots =
-                              data.where((element) {
-                            final found = element.dates.firstWhereOrNull(
-                                (element) => element['date'] == day);
+                    AppDropdown(
+                      value: DateFormat('yMd').format(currentDate.dateTime),
+                      hint: 'Select Dates:',
+                      listItems: selectedDates.datesList.map((date) {
+                        return {
+                          'value': date.dateTime,
+                          'text': DateFormat('yMd').format(date.dateTime)
+                        };
+                      }).toList(),
+                      onChanged: (value) {
+                        final date = datesBox
+                            .get(DateFormat('yMd').format(value).toString());
 
-                            if (found != null) {
-                              return true;
-                            }
-
-                            return false;
-                          }).toList();
-
-                          touristSpots.sort((a, b) =>
-                              a.averageRating! < b.averageRating! ? 1 : 0);
-
-                          return ListView.builder(
-                            itemCount: touristSpots.length,
-                            itemBuilder: (context, index) {
-                              if (spotsList.values.isNotEmpty) {
-                                final selected = spotsList.values
-                                    .firstWhereOrNull((element) {
-                                  if (element.spot.name ==
-                                      touristSpots[index].name) {
-                                    return true;
-                                  }
-
-                                  return false;
-                                });
-
-                                if (selected?.date != currentDate.dateTime &&
-                                    selected?.spot.name ==
-                                        touristSpots[index].name) {
-                                  return Container();
-                                }
-
-                                return SpotListItem(
-                                  spot: touristSpots[index],
-                                  selectedDate: currentDate.dateTime,
-                                );
-                              } else {
-                                return SpotListItem(
-                                  spot: touristSpots[index],
-                                  selectedDate: currentDate.dateTime,
-                                );
-                              }
-                            },
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
+                        setState(() {
+                          selectedDates.setSelectedDate(date!);
+                        });
                       },
                     ),
-                  )
-                ],
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
               ),
-            );
-          },
+              Expanded(
+                child: _buildListView(allSpots.spots),
+              )
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildListView(List<TouristSpot> spots) {
+    List<TouristSpot> touristSpots = spots.where((element) {
+      final found =
+          element.dates.firstWhereOrNull((element) => element['date'] == day);
+
+      if (found != null) {
+        return true;
+      }
+
+      return false;
+    }).toList();
+
+    touristSpots.sort((a, b) => a.averageRating! < b.averageRating! ? 1 : 0);
+
+    return ListView.builder(
+      itemCount: touristSpots.length,
+      itemBuilder: (context, index) {
+        if (spotsList.values.isNotEmpty) {
+          final selected = spotsList.values.firstWhereOrNull((element) {
+            if (element.spot.name == touristSpots[index].name) {
+              return true;
+            }
+
+            return false;
+          });
+
+          if (selected?.date != currentDate.dateTime &&
+              selected?.spot.name == touristSpots[index].name) {
+            return Container();
+          }
+
+          return SpotListItem(
+            spot: touristSpots[index],
+            selectedDate: currentDate.dateTime,
+          );
+        } else {
+          return SpotListItem(
+            spot: touristSpots[index],
+            selectedDate: currentDate.dateTime,
+          );
+        }
+      },
     );
   }
 

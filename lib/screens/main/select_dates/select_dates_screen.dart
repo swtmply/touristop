@@ -3,15 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
-import 'package:roundcheckbox/roundcheckbox.dart';
-import 'package:touristop/models/covid_summary.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/models/selected_spots/selected_spots_model.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/screens/main/select_dates/widgets/date_picker_dialog.dart';
 import 'package:touristop/screens/main/select_dates/widgets/selection_dialog.dart';
-import 'package:touristop/theme/app_colors.dart';
 
 class SelectDatesScreen extends ConsumerStatefulWidget {
   const SelectDatesScreen({Key? key}) : super(key: key);
@@ -85,48 +82,55 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                         );
                       },
                       child: SelectDateButton(
-                        date: first,
-                        title: 'Start date',
-                      ),
+                          date: first,
+                          title: 'Start date',
+                          description: 'Click here to select a date '),
                     ),
                     const SizedBox(height: 10),
                     InkWell(
-                      onTap: () {
-                        showGeneralDialog(
-                          context: context,
-                          barrierDismissible: true,
-                          barrierLabel: MaterialLocalizations.of(context)
-                              .modalBarrierDismissLabel,
-                          pageBuilder: (BuildContext buildContext,
-                                  Animation animation,
-                                  Animation secondaryAnimation) =>
-                              AppDatePickerDialog(
-                            date: first?.add(const Duration(days: 1)) ??
-                                DateTime.now().add(const Duration(days: 1)),
-                            onChange: (value) {
-                              setState(() {
-                                second = value;
+                      onTap: first != null
+                          ? () {
+                              showGeneralDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                barrierLabel: MaterialLocalizations.of(context)
+                                    .modalBarrierDismissLabel,
+                                pageBuilder: (BuildContext buildContext,
+                                        Animation animation,
+                                        Animation secondaryAnimation) =>
+                                    AppDatePickerDialog(
+                                  date: first?.add(const Duration(days: 1)) ??
+                                      DateTime.now()
+                                          .add(const Duration(days: 1)),
+                                  onChange: (value) {
+                                    setState(() {
+                                      second = value;
 
-                                final daysBetween =
-                                    second!.difference(first!).inDays;
-                                dates.datesList.clear();
+                                      final daysBetween =
+                                          second!.difference(first!).inDays;
+                                      dates.datesList.clear();
 
-                                for (var i = 0; i < daysBetween + 1; i++) {
-                                  final date = first!.add(Duration(days: i));
-                                  debugPrint(date.toString());
+                                      for (var i = 0;
+                                          i < daysBetween + 1;
+                                          i++) {
+                                        final date =
+                                            first!.add(Duration(days: i));
 
-                                  dates.datesList.add(
-                                    DatesList(dateTime: date, timeRemaining: 8),
-                                  );
-                                }
-                              });
-                            },
-                          ),
-                        );
-                      },
+                                        dates.datesList.add(
+                                          DatesList(
+                                              dateTime: date, timeRemaining: 8),
+                                        );
+                                      }
+                                    });
+                                  },
+                                ),
+                              );
+                            }
+                          : null,
                       child: SelectDateButton(
                         date: second,
                         title: 'End date',
+                        description: 'Select a start date first',
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -205,10 +209,12 @@ class SelectDateButton extends StatelessWidget {
     Key? key,
     required this.date,
     required this.title,
+    required this.description,
   }) : super(key: key);
 
   final DateTime? date;
   final String title;
+  final String description;
 
   @override
   Widget build(BuildContext context) {
@@ -242,7 +248,7 @@ class SelectDateButton extends StatelessWidget {
                   Text(
                     date != null
                         ? DateFormat.yMMMMd('en_US').format(date!)
-                        : 'Click here to select a date',
+                        : description,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,

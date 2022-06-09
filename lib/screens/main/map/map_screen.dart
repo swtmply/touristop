@@ -32,15 +32,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   late PageController _pageController;
   int prevPage = -1;
 
-  // ignore: todo
-  // TODO add polylines
   late PolylinePoints polylinePoints;
   List<LatLng> polylineCoordinates = [];
   Map<PolylineId, Polyline> polylines = {};
-  // ignore: todo
-  // TODO add realtime location
-  // ignore: todo
-  // TODO fade in and out animation of widgets
 
   TouristSpot? selectedSpot;
   late List<SpotsList> spots;
@@ -105,6 +99,16 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 _onSpotSelect(selected.firstSpot);
               }
 
+              if (selected.firstSpot == null) {
+                _createPolylines(
+                  userPosition,
+                  LatLng(
+                    selected.firstSpot!.position!.latitude,
+                    selected.firstSpot!.position!.longitude,
+                  ),
+                );
+              }
+
               // initialize markers
               for (var spot in spots) {
                 final position = LatLng(
@@ -137,6 +141,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               onClose: () {
                 setState(() {
                   selectedSpot = null;
+                  _removePolylines();
                 });
               },
               selectedSpot: selectedSpot,
@@ -155,6 +160,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         ],
       ),
     );
+  }
+
+  _removePolylines() {
+    setState(() {
+      polylines = {};
+    });
   }
 
   _createPolylines(LatLng userPosition, LatLng destination) async {
