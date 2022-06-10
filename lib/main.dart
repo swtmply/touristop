@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,11 @@ import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
 import 'package:touristop/screens/sections/enable_location_screen.dart';
 import 'package:touristop/screens/sections/introduction_screen.dart';
 import 'package:touristop/screens/sections/login_screen.dart';
+import 'package:touristop/screens/sections/select_spot/all_spot_reviews_screen.dart';
+import 'package:touristop/screens/sections/select_spot/spot_reviews_screen.dart';
+import 'package:touristop/theme/app_colors.dart';
 import 'package:touristop/utils/navigation.dart';
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 Future<void> main() async {
@@ -55,6 +60,20 @@ class MyApp extends ConsumerWidget {
     final datesBox = Hive.box<DatesList>('dates');
 
     return MaterialApp(
+      home: AnimatedSplashScreen(
+        splash: Container(
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.coldBlue, AppColors.slime])),
+            child: Image.asset('assets/images/touristop_logo.png')),
+        nextScreen: const Introduction(),
+        splashIconSize: 1000,
+        duration: 3000,
+        splashTransition: SplashTransition.fadeTransition,
+        animationDuration: const Duration(seconds: 1),
+      ),
       title: 'Touristop',
       theme: ThemeData(
         primarySwatch: Colors.blue,
