@@ -114,20 +114,25 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                   ],
                 ),
               ),
-              FutureBuilder(
-                future: allSpots.init(userPosition.position!),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    );
-                  }
+              if (allSpots.spots.isEmpty)
+                FutureBuilder(
+                  future: allSpots.init(userPosition.position!),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      );
+                    }
 
-                  return Expanded(
-                    child: _buildListView(allSpots.spots),
-                  );
-                },
-              )
+                    return Expanded(
+                      child: _buildListView(allSpots.spots),
+                    );
+                  },
+                )
+              else
+                Expanded(
+                  child: _buildListView(allSpots.spots),
+                )
             ],
           ),
         ),
