@@ -8,6 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:touristop/firebase_options.dart';
 import 'package:touristop/models/app_geopoint/app_geopoint_model.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
+import 'package:touristop/models/plan.dart';
 import 'package:touristop/models/selected_spots/selected_spots_model.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
@@ -19,8 +20,6 @@ import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
 import 'package:touristop/screens/sections/enable_location_screen.dart';
 import 'package:touristop/screens/sections/introduction_screen.dart';
 import 'package:touristop/screens/sections/login_screen.dart';
-import 'package:touristop/screens/sections/select_spot/all_spot_reviews_screen.dart';
-import 'package:touristop/screens/sections/select_spot/spot_reviews_screen.dart';
 import 'package:touristop/utils/navigation.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
@@ -35,10 +34,12 @@ Future<void> main() async {
   Hive.registerAdapter<SpotsList>(SpotsListAdapter());
   Hive.registerAdapter<DatesList>(DatesListAdapter());
   Hive.registerAdapter(SelectedSpotsAdapter());
+  Hive.registerAdapter(PlanAdapter());
 
   await Hive.openBox<SpotsList>('spots');
   await Hive.openBox<DatesList>('dates');
   await Hive.openBox<SelectedSpots>('selectedSpots');
+  await Hive.openBox<Plan>('plan');
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -51,6 +52,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     User? user = FirebaseAuth.instance.currentUser;
+    final datesBox = Hive.box<DatesList>('dates');
 
     return MaterialApp(
       title: 'Touristop',
@@ -69,7 +71,11 @@ class MyApp extends ConsumerWidget {
         '/login': (context) => const LoginScreen(),
         '/introduction': (context) => const Introduction(),
       },
-      initialRoute: user == null ? '/introduction' : '/enable-location',
+      initialRoute: user == null
+          ? '/introduction'
+          : datesBox.values.isEmpty
+              ? '/select/dates'
+              : '/navigation',
     );
   }
 }

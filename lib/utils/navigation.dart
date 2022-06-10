@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:touristop/providers/selected_plan_provider.dart';
+import 'package:hive/hive.dart';
+import 'package:touristop/models/plan.dart';
+import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/screens/main/map/map_screen.dart';
 import 'package:touristop/screens/main/schedule/schedule_screen.dart';
 import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
@@ -16,16 +18,24 @@ class Navigation extends ConsumerStatefulWidget {
 class _NavigationState extends ConsumerState<Navigation> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
+  final plan = Hive.box<Plan>('plan');
+
+  @override
+  void initState() {
+    super.initState();
+    final userPosition = ref.read(userLocationProvider);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      await userPosition.locateUser();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final userPlan = ref.watch(planProvider);
-
     return Scaffold(
       bottomNavigationBar: BAB(
         pageController: _pageController,
         currentPage: _currentPage,
-        plan: userPlan.plan,
+        plan: plan.get('plan')!.selected,
       ),
       body: PageView(
         controller: _pageController,
@@ -38,7 +48,8 @@ class _NavigationState extends ConsumerState<Navigation> {
         children: [
           const MapScreen(),
           const ScheduleScreen(),
-          if (userPlan.plan == 'Plan your own trip') const SelectSpotsScreen()
+          if (plan.get('plan')!.selected == 'Plan your own trip')
+            const SelectSpotsScreen()
         ],
       ),
     );

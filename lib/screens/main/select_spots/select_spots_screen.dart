@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_spots.dart';
 import 'package:touristop/providers/spots_provider.dart';
+import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/screens/main/select_spots/widgets/app_dropdown.dart';
 import 'package:touristop/screens/main/select_spots/widgets/spot_list_item.dart';
 import 'package:touristop/theme/app_colors.dart';
@@ -41,9 +42,10 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
     final selectedDates = ref.watch(datesProvider);
     final selectedSpots = ref.watch(selectedSpotsProvider);
     final allSpots = ref.watch(spotsProvider);
+    final userPosition = ref.watch(userLocationProvider);
 
     setState(() {
-      currentDate = selectedDates.selectedDate!;
+      currentDate = selectedDates.selectedDate ?? datesBox.values.first;
       final dateInBox = selectedDates.findByDate(currentDate.dateTime);
 
       timeRemaining = dateInBox!.timeRemaining;
@@ -94,7 +96,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                     AppDropdown(
                       value: DateFormat('yMd').format(currentDate.dateTime),
                       hint: 'Select Dates:',
-                      listItems: selectedDates.datesList.map((date) {
+                      listItems: datesBox.values.map((date) {
                         return {
                           'value': date.dateTime,
                           'text': DateFormat('yMd').format(date.dateTime)
@@ -112,8 +114,19 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                   ],
                 ),
               ),
-              Expanded(
-                child: _buildListView(allSpots.spots),
+              FutureBuilder(
+                future: allSpots.init(userPosition.position!),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator.adaptive(),
+                    );
+                  }
+
+                  return Expanded(
+                    child: _buildListView(allSpots.spots),
+                  );
+                },
               )
             ],
           ),

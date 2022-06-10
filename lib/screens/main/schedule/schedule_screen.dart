@@ -101,7 +101,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                       child: ListView(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        children: dates.datesList.map(
+                        children: datesBox.values.map(
                           (e) {
                             return Container(
                               color: _selectedDate == e.dateTime
@@ -188,6 +188,12 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
                                 onTap: () {
                                   selectedSpots
                                       .setFirstSpot(_spotsList![index].spot);
+                                  dates.setSelectedDate(
+                                    DatesList(
+                                        dateTime: _selectedDate!,
+                                        timeRemaining: 8),
+                                  );
+
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

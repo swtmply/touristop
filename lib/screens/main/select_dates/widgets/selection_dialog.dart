@@ -1,25 +1,20 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
-import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
+import 'package:touristop/models/plan.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_bundle.dart';
-import 'package:touristop/providers/selected_plan_provider.dart';
 import 'package:touristop/providers/spots_provider.dart';
 import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
 import 'package:touristop/theme/app_colors.dart';
 import 'package:touristop/utils/bundles.dart';
-import 'package:touristop/utils/convert_to.dart';
 import 'package:touristop/utils/navigation.dart';
-import 'package:touristop/utils/reviews.dart';
 
 class SelectionDialog extends ConsumerStatefulWidget {
   final bool isArrivalIncluded;
@@ -32,7 +27,7 @@ class SelectionDialog extends ConsumerStatefulWidget {
 
 class _SelectionDialogState extends ConsumerState<SelectionDialog> {
   final datesBox = Hive.box<DatesList>('dates');
-  final spots = FirebaseFirestore.instance.collection('spots');
+  final plan = Hive.box<Plan>('plan');
 
   String selected = '';
   bool _isLoading = false;
@@ -43,7 +38,6 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
     final selectedBundles = ref.watch(selectedBundleProvider);
     final userPosition = ref.watch(userLocationProvider);
     final allSpots = ref.watch(spotsProvider);
-    final userPlan = ref.watch(planProvider);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -149,9 +143,14 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                               ),
                             ),
                             onPressed: () async {
-                              final finalDates = dates.datesList.map((e) =>
-                                  DatesList(
-                                      dateTime: e.dateTime, timeRemaining: 8));
+                              final finalDates = dates.datesList.map(
+                                (e) => DatesList(
+                                  dateTime: e.dateTime,
+                                  timeRemaining: 8,
+                                ),
+                              );
+
+                              await userPosition.locateUser();
 
                               await datesBox.clear();
                               datesBox.putAll({
@@ -160,19 +159,12 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                               });
 
                               // Build Tourist Spots
-                              QuerySnapshot snapshot = await spots.get();
-                              final docs = snapshot.docs.map((e) => e).toList();
 
                               setState(() {
                                 _isLoading = true;
                               });
 
-                              allSpots.addAll(
-                                await docsToTouristSpotList(
-                                  docs,
-                                  userPosition.position!,
-                                ),
-                              );
+                              await allSpots.init(userPosition.position!);
 
                               setState(() {
                                 _isLoading = false;
@@ -180,7 +172,7 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
 
                               dates.setSelectedDate(dates.datesList.first);
                               if (selected == 'Plan your own trip') {
-                                userPlan.setPlan(selected);
+                                plan.put('plan', Plan(selected: selected));
 
                                 Navigator.of(context).pushAndRemoveUntil(
                                   MaterialPageRoute(
@@ -190,7 +182,7 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                                   (Route<dynamic> router) => false,
                                 );
                               } else {
-                                userPlan.setPlan(selected);
+                                plan.put('plan', Plan(selected: selected));
 
                                 setState(() {
                                   _isLoading = true;
@@ -228,22 +220,6 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
               ],
             ),
     );
-  }
-
-  Future<List<TouristSpot>> docsToTouristSpotList(
-      List<QueryDocumentSnapshot<Object?>> docs, Position userPosition) async {
-    List<TouristSpot> touristSpots = docs
-        .map((doc) => ConvertTo.touristSpot(
-            doc.data() as Map<String, dynamic>, userPosition))
-        .toList();
-
-    for (TouristSpot spot in touristSpots) {
-      double rating = await Reviews.reviewAverage(spot.name);
-
-      spot.averageRating = rating.isNaN ? 0 : rating;
-    }
-
-    return touristSpots;
   }
 }
 

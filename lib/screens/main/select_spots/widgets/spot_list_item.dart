@@ -60,6 +60,7 @@ class _SpotListItemState extends ConsumerState<SpotListItem> {
             builder: (context) => SpotInformation(
               spot: widget.spot,
               isSelectable: isSelectable,
+              isSelected: isSelected,
             ),
           ),
         );
@@ -153,44 +154,47 @@ class _SpotListItemState extends ConsumerState<SpotListItem> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.only(top: 20, right: 20),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: RoundCheckBox(
-                isChecked: isSelected,
-                onTap: isSelectable || isSelected
-                    ? (selectedItem) {
-                        final spotItem = SpotsList(
-                          spot: widget.spot,
-                          date: widget.selectedDate,
-                          isDone: false,
-                          isSelected: true,
-                        );
+          Visibility(
+            visible: isSelectable || isSelected,
+            child: Container(
+              padding: const EdgeInsets.only(top: 20, right: 20),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: RoundCheckBox(
+                  isChecked: isSelected,
+                  onTap: isSelectable || isSelected
+                      ? (selectedItem) {
+                          final spotItem = SpotsList(
+                            spot: widget.spot,
+                            date: widget.selectedDate,
+                            isDone: false,
+                            isSelected: true,
+                          );
 
-                        if (selectedItem.toString() == 'true') {
-                          dates.updateDateList(
-                              widget.selectedDate, -widget.spot.numberOfHours);
-                          spotsBox.put(key, spotItem);
-                          debugPrint('Spot Added');
-                        } else {
-                          dates.updateDateList(
-                              widget.selectedDate, widget.spot.numberOfHours);
-                          spotsBox.delete(key);
+                          if (selectedItem.toString() == 'true') {
+                            dates.updateDateList(widget.selectedDate,
+                                -widget.spot.numberOfHours);
+                            spotsBox.put(key, spotItem);
+                            debugPrint('Spot Added');
+                          } else {
+                            dates.updateDateList(
+                                widget.selectedDate, widget.spot.numberOfHours);
+                            spotsBox.delete(key);
+                          }
                         }
-                      }
-                    : null,
-                size: 25,
-                checkedColor: Colors.transparent,
-                uncheckedColor: Colors.transparent,
-                border: Border.all(
-                  width: 3,
-                  color: Colors.white,
+                      : null,
+                  size: 25,
+                  checkedColor: Colors.transparent,
+                  uncheckedColor: Colors.transparent,
+                  border: Border.all(
+                    width: 3,
+                    color: Colors.white,
+                  ),
+                  checkedWidget: Container(
+                      padding: const EdgeInsets.all(2),
+                      child: const FaIcon(FontAwesomeIcons.check,
+                          color: Colors.white, size: 16)),
                 ),
-                checkedWidget: Container(
-                    padding: const EdgeInsets.all(2),
-                    child: const FaIcon(FontAwesomeIcons.check,
-                        color: Colors.white, size: 16)),
               ),
             ),
           ),
