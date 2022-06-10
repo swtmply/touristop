@@ -57,7 +57,7 @@ class EnableLocationScreen extends ConsumerWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

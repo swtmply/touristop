@@ -35,6 +35,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
 
     spots.sort((a, b) {
       final day = DateFormat('E').format(_selectedDate!).toString();
+      debugPrint(b.spot.name);
       final scheduleA =
               a.spot.dates.firstWhere((element) => element['date'] == day),
           scheduleB =

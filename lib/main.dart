@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +20,6 @@ import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
 import 'package:touristop/screens/sections/enable_location_screen.dart';
 import 'package:touristop/screens/sections/introduction_screen.dart';
 import 'package:touristop/screens/sections/login_screen.dart';
-import 'package:touristop/screens/sections/select_spot/all_spot_reviews_screen.dart';
-import 'package:touristop/screens/sections/select_spot/spot_reviews_screen.dart';
 import 'package:touristop/theme/app_colors.dart';
 import 'package:touristop/utils/navigation.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
@@ -62,13 +59,20 @@ class MyApp extends ConsumerWidget {
     return MaterialApp(
       home: AnimatedSplashScreen(
         splash: Container(
-            decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppColors.coldBlue, AppColors.slime])),
-            child: Image.asset('assets/images/touristop_logo.png')),
-        nextScreen: const Introduction(),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [AppColors.coldBlue, AppColors.slime],
+            ),
+          ),
+          child: Image.asset('assets/images/touristop_logo.png'),
+        ),
+        nextScreen: user == null
+            ? const Introduction()
+            : datesBox.values.isEmpty
+                ? const SelectDatesScreen()
+                : const Navigation(),
         splashIconSize: 1000,
         duration: 3000,
         splashTransition: SplashTransition.fadeTransition,
@@ -90,11 +94,11 @@ class MyApp extends ConsumerWidget {
         '/login': (context) => const LoginScreen(),
         '/introduction': (context) => const Introduction(),
       },
-      initialRoute: user == null
-          ? '/introduction'
-          : datesBox.values.isEmpty
-              ? '/select/dates'
-              : '/navigation',
+      // initialRoute: user == null
+      //     ? '/introduction'
+      //     : datesBox.values.isEmpty
+      //         ? '/select/dates'
+      //         : '/navigation',
     );
   }
 }

@@ -207,7 +207,6 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                               ),
                             ),
                             height: 75,
-                            // padding: const EdgeInsets.symmetric(vertical: 20),
                             child: Row(
                               children: [
                                 Container(
@@ -216,11 +215,13 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Colors.pink,
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        data['userPhoto'],
-                                      ),
-                                    ),
+                                    image: data['userPhoto'] != null
+                                        ? DecorationImage(
+                                            image: NetworkImage(
+                                              data['userPhoto'],
+                                            ),
+                                          )
+                                        : null,
                                   ),
                                 ),
                                 const SizedBox(
@@ -378,8 +379,8 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                         if (rating != 0.0 || review.isNotEmpty) {
                           reviews.add({
                             'review': review,
-                            'user': user!.displayName,
-                            'userPhoto': user.photoURL,
+                            'user': user?.displayName ?? 'Guest User',
+                            'userPhoto': user?.photoURL,
                             'spot': spot.name,
                             'rating': rating
                           }).catchError((error) =>

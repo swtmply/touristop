@@ -6,6 +6,7 @@ import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/screens/main/map/map_screen.dart';
 import 'package:touristop/screens/main/schedule/schedule_screen.dart';
 import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
+import 'package:touristop/screens/sections/settings.dart';
 import 'package:touristop/theme/app_colors.dart';
 
 class Navigation extends ConsumerStatefulWidget {
@@ -16,8 +17,8 @@ class Navigation extends ConsumerStatefulWidget {
 }
 
 class _NavigationState extends ConsumerState<Navigation> {
-  final PageController _pageController = PageController(initialPage: 0);
-  int _currentPage = 0;
+  final PageController _pageController = PageController(initialPage: 1);
+  int _currentPage = 1;
   final plan = Hive.box<Plan>('plan');
 
   @override
@@ -35,7 +36,6 @@ class _NavigationState extends ConsumerState<Navigation> {
       bottomNavigationBar: BAB(
         pageController: _pageController,
         currentPage: _currentPage,
-        plan: plan.get('plan')!.selected,
       ),
       body: PageView(
         controller: _pageController,
@@ -45,11 +45,10 @@ class _NavigationState extends ConsumerState<Navigation> {
             _currentPage = page;
           });
         },
-        children: [
-          const MapScreen(),
-          const ScheduleScreen(),
-          if (plan.get('plan')!.selected == 'Plan your own trip')
-            const SelectSpotsScreen()
+        children: const [
+          MapScreen(),
+          ScheduleScreen(),
+          SettingsScreen(),
         ],
       ),
     );
@@ -61,14 +60,12 @@ class BAB extends StatelessWidget {
     Key? key,
     required PageController pageController,
     required int currentPage,
-    required this.plan,
   })  : _pageController = pageController,
         _currentPage = currentPage,
         super(key: key);
 
   final PageController _pageController;
   final int _currentPage;
-  final String plan;
 
   @override
   Widget build(BuildContext context) {
@@ -89,13 +86,12 @@ class BAB extends StatelessWidget {
             page: 1,
             currentPage: _currentPage,
           ),
-          if (plan == 'Plan your own trip')
-            BottomNavItem(
-              icon: Icons.airplanemode_active,
-              pageController: _pageController,
-              page: 2,
-              currentPage: _currentPage,
-            ),
+          BottomNavItem(
+            icon: Icons.settings,
+            pageController: _pageController,
+            page: 2,
+            currentPage: _currentPage,
+          ),
         ],
       ),
     );

@@ -55,6 +55,12 @@ class Authentication {
     return user;
   }
 
+  static Future<User?> signInAnonymously() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    final userCredentials = await auth.signInAnonymously();
+    return userCredentials.user;
+  }
+
   static Future<void> signOut({required BuildContext context}) async {
     try {
       await FirebaseAuth.instance.signOut();

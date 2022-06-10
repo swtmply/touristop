@@ -18,7 +18,6 @@ import 'package:touristop/screens/main/select_spots/widgets/app_dropdown.dart';
 import 'package:touristop/screens/main/select_spots/widgets/spot_list_item.dart';
 import 'package:touristop/theme/app_colors.dart';
 import 'package:touristop/utils/convert_to.dart';
-import 'package:touristop/utils/navigation.dart';
 import 'package:touristop/utils/reviews.dart';
 import 'package:collection/collection.dart';
 
@@ -58,11 +57,33 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
         label: const Text('Continue'),
         onPressed: () {
           selectedSpots.setNull();
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const Navigation(),
-            ),
-          );
+          bool warning = false;
+          for (var date in selectedDates.datesList) {
+            final formatDate = DateFormat('yMd').format(date.dateTime);
+            final exists = spotsList.values.firstWhereOrNull((element) {
+              final formatDateElement = DateFormat('yMd').format(element.date);
+
+              return formatDate == formatDateElement;
+            });
+
+            if (exists == null) {
+              warning = true;
+              break;
+            }
+          }
+
+          if (warning) {
+            showDialog(
+              context: context,
+              builder: (context) => _showWarning(),
+            );
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              '/navigation',
+              (route) => false,
+            );
+          }
         },
         icon: const Icon(Icons.arrow_forward_outlined),
       ),
@@ -133,6 +154,66 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                 Expanded(
                   child: _buildListView(allSpots.spots),
                 )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _showWarning() {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+        child: SizedBox(
+          height: 135,
+          width: 250,
+          child: Column(
+            children: [
+              const Text(
+                  'Please select a tourist spot/s in all of the dates. Some dates will have no schedule, are you sure you want to continue?'),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        color: AppColors.slime,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/navigation',
+                        (route) => false,
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 20),
+                      backgroundColor: AppColors.coldBlue,
+                    ),
+                    child: Text(
+                      'Confirm',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),

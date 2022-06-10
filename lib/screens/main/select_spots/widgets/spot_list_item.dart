@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:intl/intl.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';

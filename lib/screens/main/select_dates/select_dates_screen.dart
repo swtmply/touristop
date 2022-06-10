@@ -102,6 +102,7 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                                   date: first?.add(const Duration(days: 1)) ??
                                       DateTime.now()
                                           .add(const Duration(days: 1)),
+                                  maxDate: first?.add(const Duration(days: 7)),
                                   onChange: (value) {
                                     setState(() {
                                       second = value;
@@ -167,11 +168,7 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                         ),
                       ),
                       onPressed: first == null
-                          ? () {
-                              spotsBox.deleteFromDisk();
-                              datesBox.deleteFromDisk();
-                              clusterSpots.deleteFromDisk();
-                            }
+                          ? null
                           : () {
                               showGeneralDialog(
                                 context: context,

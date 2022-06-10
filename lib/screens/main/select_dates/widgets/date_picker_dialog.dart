@@ -8,9 +8,13 @@ import 'package:touristop/theme/app_colors.dart';
 class AppDatePickerDialog extends ConsumerStatefulWidget {
   final Function onChange;
   final DateTime date;
-  const AppDatePickerDialog(
-      {Key? key, required this.date, required this.onChange})
-      : super(key: key);
+  final DateTime? maxDate;
+  const AppDatePickerDialog({
+    Key? key,
+    required this.date,
+    required this.onChange,
+    this.maxDate,
+  }) : super(key: key);
 
   @override
   ConsumerState<AppDatePickerDialog> createState() =>
@@ -57,6 +61,7 @@ class _AppDatePickerDialogState extends ConsumerState<AppDatePickerDialog> {
                       height: MediaQuery.of(context).size.height * 0.45,
                       child: SfDateRangePicker(
                         minDate: date,
+                        maxDate: widget.maxDate,
                         selectionMode: DateRangePickerSelectionMode.single,
                         enablePastDates: false,
                         initialSelectedDate: date,

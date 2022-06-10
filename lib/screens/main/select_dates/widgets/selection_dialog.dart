@@ -143,6 +143,10 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                               ),
                             ),
                             onPressed: () async {
+                              setState(() {
+                                _isLoading = true;
+                              });
+
                               final finalDates = dates.datesList.map(
                                 (e) => DatesList(
                                   dateTime: e.dateTime,
@@ -160,15 +164,7 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
 
                               // Build Tourist Spots
 
-                              setState(() {
-                                _isLoading = true;
-                              });
-
                               await allSpots.init(userPosition.position!);
-
-                              setState(() {
-                                _isLoading = false;
-                              });
 
                               dates.setSelectedDate(dates.datesList.first);
                               if (selected == 'Plan your own trip') {
@@ -183,10 +179,6 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                                 );
                               } else {
                                 plan.put('plan', Plan(selected: selected));
-
-                                setState(() {
-                                  _isLoading = true;
-                                });
 
                                 for (var e in dates.datesList) {
                                   await Bundles.getBundleByDate(
