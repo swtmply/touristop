@@ -4,23 +4,24 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:touristop/providers/selected_spots.dart';
+import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/theme/app_colors.dart';
 
 class AllSpotReviews extends ConsumerStatefulWidget {
-  const AllSpotReviews({Key? key}) : super(key: key);
+  final TouristSpot spot;
+  const AllSpotReviews({Key? key, required this.spot}) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AllSpotReviewsState();
 }
 
 class _AllSpotReviewsState extends ConsumerState<AllSpotReviews> {
-  int selectedStars = 5;
+  String selected = 'All';
 
   @override
   Widget build(BuildContext context) {
-    final selectedSpot = ref.watch(selectedSpotsProvider);
     final reviews = FirebaseFirestore.instance.collection('reviews');
+    final spot = widget.spot;
 
     return Scaffold(
       body: SafeArea(
@@ -52,6 +53,7 @@ class _AllSpotReviewsState extends ConsumerState<AllSpotReviews> {
                   ],
                 ),
               ),
+              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 height: 30,
@@ -61,13 +63,50 @@ class _AllSpotReviewsState extends ConsumerState<AllSpotReviews> {
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            selected = 'All';
+                          });
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 10),
+                          width: 70,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: selected == 'All'
+                                  ? [AppColors.coldBlue, AppColors.slime]
+                                  : [Colors.white, Colors.white],
+                            ),
+                            border: Border.all(
+                              color: selected == 'All'
+                                  ? Colors.transparent
+                                  : Colors.black,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'All',
+                              style: TextStyle(
+                                color: selected == 'All'
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       for (int i = 5; i >= 0; i--)
                         StarBuilder(
                           count: i,
-                          selected: i == selectedStars,
+                          selected: i.toString() == selected,
                           onTap: (value) {
                             setState(() {
-                              selectedStars = value;
+                              selected = value.toString();
                             });
                           },
                         )
@@ -79,7 +118,7 @@ class _AllSpotReviewsState extends ConsumerState<AllSpotReviews> {
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
                   stream: reviews
-                      .where('spot', isEqualTo: selectedSpot.firstSpot!.name)
+                      .where('spot', isEqualTo: spot.name)
                       .get()
                       .asStream(),
                   builder: (context, snapshot) {
@@ -95,7 +134,10 @@ class _AllSpotReviewsState extends ConsumerState<AllSpotReviews> {
 
                     final docs = snapshot.requireData.docs.where((element) {
                       final data = element.data() as Map<String, dynamic>;
-                      if (data['rating'] == selectedStars) return true;
+                      final rating = int.tryParse(selected);
+                      if (data['rating'] == rating || rating == null) {
+                        return true;
+                      }
 
                       return false;
                     }).toList();

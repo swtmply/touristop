@@ -62,8 +62,6 @@ class MyApp extends ConsumerWidget {
         '/select/dates': (context) => const SelectDatesScreen(),
         '/select/spots': (context) => const SelectSpotsScreen(),
         '/select/spots/cluster': (context) => const ClusterSelectSpots(),
-        '/selected/spot/reviews': (context) => const SpotReviews(),
-        '/selected/spots/reviews/all': (context) => const AllSpotReviews(),
         '/enable-location': (context) => const EnableLocationScreen(),
         '/schedule': (context) => const ScheduleScreen(),
         '/navigation': (context) => const Navigation(),

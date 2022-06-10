@@ -8,12 +8,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
-import 'package:touristop/providers/selected_spots.dart';
 import 'package:touristop/screens/sections/select_spot/all_spot_reviews_screen.dart';
 import 'package:touristop/utils/reviews.dart';
 
 class SpotReviews extends ConsumerStatefulWidget {
-  const SpotReviews({Key? key}) : super(key: key);
+  final TouristSpot spot;
+  const SpotReviews({Key? key, required this.spot}) : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SpotReviewsState();
@@ -25,7 +25,6 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
 
   String review = '';
   double rating = 0;
-  late TouristSpot spot;
 
   bool _checkIsDone(String name) {
     for (var list in spotsBox.values) {
@@ -39,11 +38,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedSpot = ref.watch(selectedSpotsProvider);
-
-    setState(() {
-      spot = selectedSpot.firstSpot!;
-    });
+    final spot = widget.spot;
 
     return Scaffold(
       body: Padding(
@@ -76,7 +71,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                   visible: _checkIsDone(spot.name),
                   child: TextButton(
                     onPressed: () {
-                      ratingDialog(context);
+                      ratingDialog(context, spot);
                     },
                     child: Row(
                       children: [
@@ -113,7 +108,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                       width: 250,
                       alignment: Alignment.bottomLeft,
                       child: Text(
-                        selectedSpot.firstSpot!.name,
+                        spot.name,
                         style: GoogleFonts.inter(
                           fontWeight: FontWeight.w700,
                           fontSize: 18,
@@ -124,7 +119,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                     Row(
                       children: [
                         RatingBar.builder(
-                          initialRating: selectedSpot.firstSpot!.averageRating!,
+                          initialRating: spot.averageRating!,
                           direction: Axis.horizontal,
                           allowHalfRating: true,
                           itemCount: 5,
@@ -138,8 +133,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                             color: Colors.amber,
                           ),
                         ),
-                        Text(
-                            '${selectedSpot.firstSpot!.averageRating!.toStringAsFixed(2)}/5')
+                        Text('${spot.averageRating!.toStringAsFixed(2)}/5')
                       ],
                     ),
                   ],
@@ -147,10 +141,13 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                 TextButton(
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AllSpotReviews(),
-                        ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AllSpotReviews(
+                          spot: spot,
+                        ),
+                      ),
+                    );
                   },
                   child: Row(
                     children: [
@@ -184,7 +181,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
             const SizedBox(height: 20),
             Expanded(
               child: StreamBuilder(
-                stream: Reviews.spotReviews(selectedSpot.firstSpot!.name, 10),
+                stream: Reviews.spotReviews(spot.name, 10),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return const Text('Something went wrong');
@@ -283,7 +280,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
     );
   }
 
-  Future<void> ratingDialog(BuildContext context) async {
+  Future<void> ratingDialog(BuildContext context, TouristSpot spot) async {
     final reviews = FirebaseFirestore.instance.collection('reviews');
     User? user = FirebaseAuth.instance.currentUser;
 
