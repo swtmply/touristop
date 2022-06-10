@@ -53,8 +53,8 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
               padding: const EdgeInsets.symmetric(vertical: 24.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  SizedBox(
+                children: [
+                  const SizedBox(
                     width: 170,
                     height: 170,
                     child: LoadingIndicator(
@@ -64,11 +64,13 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                   ),
                   Center(
                     child: Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'Generating your schedule. Please wait...',
+                        selected == 'Plan your own trip'
+                            ? 'Please wait...'
+                            : 'Generating your schedule. Please wait...',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w500,
                         ),
