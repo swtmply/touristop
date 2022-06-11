@@ -23,13 +23,11 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
   String selectedOption = '';
   DateTime? first, second;
   bool isArrivalIncluded = false;
+  bool isDismissable = true;
 
   @override
   Widget build(BuildContext context) {
     final dates = ref.watch(datesProvider);
-    final spotsBox = Hive.box<SpotsList>('spots');
-    final datesBox = Hive.box<DatesList>('dates');
-    final clusterSpots = Hive.box<SelectedSpots>('selectedSpots');
 
     return Scaffold(
       body: SafeArea(
@@ -172,13 +170,18 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                           : () {
                               showGeneralDialog(
                                 context: context,
-                                barrierDismissible: true,
+                                barrierDismissible: false,
                                 barrierLabel: MaterialLocalizations.of(context)
                                     .modalBarrierDismissLabel,
                                 pageBuilder: (BuildContext buildContext,
                                         Animation animation,
                                         Animation secondaryAnimation) =>
                                     SelectionDialog(
+                                  onLoading: (value) {
+                                    setState(() {
+                                      isDismissable = value;
+                                    });
+                                  },
                                   isArrivalIncluded: isArrivalIncluded,
                                 ),
                               );

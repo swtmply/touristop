@@ -18,7 +18,9 @@ import 'package:touristop/utils/navigation.dart';
 
 class SelectionDialog extends ConsumerStatefulWidget {
   final bool isArrivalIncluded;
-  const SelectionDialog({Key? key, required this.isArrivalIncluded})
+  final Function onLoading;
+  const SelectionDialog(
+      {Key? key, required this.isArrivalIncluded, required this.onLoading})
       : super(key: key);
 
   @override
@@ -146,6 +148,8 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
                               setState(() {
                                 _isLoading = true;
                               });
+
+                              widget.onLoading(false);
 
                               final finalDates = dates.datesList.map(
                                 (e) => DatesList(

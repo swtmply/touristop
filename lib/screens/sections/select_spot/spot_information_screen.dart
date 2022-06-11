@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -13,6 +14,7 @@ import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/spots_provider.dart';
 import 'package:touristop/screens/main/map/pin_map_screen.dart';
 import 'package:touristop/screens/sections/select_spot/spot_reviews_screen.dart';
+import 'package:touristop/theme/app_colors.dart';
 
 class SpotInformation extends ConsumerStatefulWidget {
   final TouristSpot spot;
@@ -39,6 +41,7 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
   final spotsCollection = FirebaseFirestore.instance.collection('spots');
   bool isSelected = false;
   String spotKey = '';
+  FlutterTts flutterTts = FlutterTts();
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +58,11 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
       spotKey = '${spot.name}$key';
       isSelected = spotsBox.containsKey(spotKey);
     });
+
+    speak() async {
+      await flutterTts.setPitch(1);
+      await flutterTts.speak(spot.description);
+    }
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -139,33 +147,32 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                   child: Row(
                     children: [
                       RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: GoogleFonts.inter(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            children: <TextSpan>[
-                              const TextSpan(text: 'Open  '),
-                              TextSpan(
-                                  text:
-                                      '${spot.dates.first['date']}-${spot.dates.last['date']}  ',
-                                  style: GoogleFonts.inter(
-                                    color:
-                                        const Color.fromRGBO(93, 107, 230, 1),
-                                  )),
-                              const TextSpan(text: '\u2022  '),
-                              TextSpan(
-                                  text: spot.dates.first['timeOpen'] == '6:00AM'
-                                      ? 'Open 24 Hours'
-                                      : '${spot.dates.first['timeOpen']} to ${spot.dates.first['timeClose']} ',
-                                  style: GoogleFonts.inter(
-                                    color:
-                                        const Color.fromRGBO(93, 230, 197, 1),
-                                  )),
-                            ],
-                          )),
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          children: <TextSpan>[
+                            const TextSpan(text: 'Open  '),
+                            TextSpan(
+                                text:
+                                    '${spot.dates.first['date']}-${spot.dates.last['date']}  ',
+                                style: GoogleFonts.inter(
+                                  color: const Color.fromRGBO(93, 107, 230, 1),
+                                )),
+                            const TextSpan(text: '\u2022  '),
+                            TextSpan(
+                                text: spot.dates.first['timeOpen'] == '6:00AM'
+                                    ? 'Open 24 Hours'
+                                    : '${spot.dates.first['timeOpen']} to ${spot.dates.first['timeClose']} ',
+                                style: GoogleFonts.inter(
+                                  color: const Color.fromRGBO(93, 230, 197, 1),
+                                )),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -342,14 +349,40 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-                  child: Text(
-                    'Address: ${spot.address}',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w500,
-                      color: const Color.fromARGB(255, 134, 134, 134),
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        child: Text(
+                          'Address: ${spot.address}',
+                          style: GoogleFonts.inter(
+                            fontSize: 16,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w500,
+                            color: const Color.fromARGB(255, 134, 134, 134),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton.icon(
+                          onPressed: () async {
+                            await speak();
+                          },
+                          icon: const Icon(
+                            Icons.spatial_audio_off,
+                            color: AppColors.coldBlue,
+                          ),
+                          label: Text(
+                            'Speak',
+                            style: GoogleFonts.inter(
+                              color: AppColors.coldBlue,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Container(
