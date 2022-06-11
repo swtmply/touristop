@@ -18,18 +18,21 @@ import 'package:touristop/screens/main/select_spots/widgets/app_dropdown.dart';
 import 'package:touristop/screens/main/select_spots/widgets/spot_list_item.dart';
 import 'package:touristop/theme/app_colors.dart';
 import 'package:touristop/utils/convert_to.dart';
+import 'package:touristop/utils/navigation.dart';
 import 'package:touristop/utils/reviews.dart';
 import 'package:collection/collection.dart';
 
-class SelectSpotsScreen extends ConsumerStatefulWidget {
-  const SelectSpotsScreen({Key? key}) : super(key: key);
+class SelectSpotsDialog extends ConsumerStatefulWidget {
+  final DatesList selectedDate;
+  const SelectSpotsDialog({Key? key, required this.selectedDate})
+      : super(key: key);
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _SelectSpotsScreenState();
+      _SelectSpotsDialogState();
 }
 
-class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
+class _SelectSpotsDialogState extends ConsumerState<SelectSpotsDialog> {
   final datesBox = Hive.box<DatesList>('dates');
   final spotsList = Hive.box<SpotsList>('spots');
 
@@ -44,7 +47,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
     final userPosition = ref.watch(userLocationProvider);
 
     setState(() {
-      currentDate = selectedDates.selectedDate ?? datesBox.values.first;
+      currentDate = widget.selectedDate;
       final dateInBox = selectedDates.findByDate(currentDate.dateTime);
 
       timeRemaining = dateInBox!.timeRemaining;
@@ -57,33 +60,10 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
         label: const Text('Continue'),
         onPressed: () {
           selectedSpots.setNull();
-          bool warning = false;
-          for (var date in selectedDates.datesList) {
-            final formatDate = DateFormat('yMd').format(date.dateTime);
-            final exists = spotsList.values.firstWhereOrNull((element) {
-              final formatDateElement = DateFormat('yMd').format(element.date);
-
-              return formatDate == formatDateElement;
-            });
-
-            if (exists == null) {
-              warning = true;
-              break;
-            }
-          }
-
-          if (warning) {
-            showDialog(
-              context: context,
-              builder: (context) => _showWarning(),
-            );
-          } else {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              '/navigation',
-              (route) => false,
-            );
-          }
+          showDialog(
+            context: context,
+            builder: (context) => _showWarning(),
+          );
         },
         icon: const Icon(Icons.arrow_forward_outlined),
       ),
@@ -174,7 +154,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                  'Please select a tourist spot/s in all of the dates. Some dates will have no schedule, are you sure you want to continue?'),
+                  'This action is irreversible, are you sure you want to continue?'),
               Expanded(
                 child: Container(),
               ),
@@ -196,11 +176,9 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
                   const SizedBox(width: 10),
                   TextButton(
                     onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/navigation',
-                        (route) => false,
-                      );
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const Navigation(),
+                      ));
                     },
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(

@@ -166,11 +166,13 @@ class _AllSpotReviewsState extends ConsumerState<AllSpotReviews> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: Colors.pink,
-                                  image: DecorationImage(
-                                    image: NetworkImage(
-                                      data['userPhoto'],
-                                    ),
-                                  ),
+                                  image: data['userPhoto'] != null
+                                      ? DecorationImage(
+                                          image: NetworkImage(
+                                            data['userPhoto'],
+                                          ),
+                                        )
+                                      : null,
                                 ),
                               ),
                               const SizedBox(

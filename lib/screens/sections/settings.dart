@@ -22,6 +22,10 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  final datesBox = Hive.box<DatesList>('dates');
+  final spotsBox = Hive.box<SpotsList>('spots');
+  final plan = Hive.box<Plan>('plan');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,6 +151,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Widget _signOutDialog() {
+    final dates = ref.watch(datesProvider);
+    final selectedBundles = ref.watch(selectedBundleProvider);
+    final allSpots = ref.watch(spotsProvider);
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -160,7 +168,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text('Are you sure you want to logout?'),
-              const SizedBox(height: 15),
+              Expanded(
+                child: Container(),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -179,6 +189,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(width: 10),
                   TextButton(
                     onPressed: () async {
+                      dates.datesList.clear();
+                      selectedBundles.selectedSpots.clear();
+                      allSpots.spots.clear();
+
+                      await datesBox.clear();
+                      await spotsBox.clear();
+                      await plan.clear();
+
+                      debugPrint(spotsBox.values.length.toString());
+
                       await Authentication.signOut(context: context);
 
                       Navigator.pushNamedAndRemoveUntil(
@@ -210,10 +230,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Widget _changePlanDialog() {
-    final datesBox = Hive.box<DatesList>('dates');
-    final spotsBox = Hive.box<SpotsList>('spots');
-    final plan = Hive.box<Plan>('plan');
-
     final dates = ref.watch(datesProvider);
     final selectedBundles = ref.watch(selectedBundleProvider);
     final allSpots = ref.watch(spotsProvider);
@@ -231,7 +247,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             children: [
               const Text(
                   'All data will be lost. Are you sure you want to change plans?'),
-              const SizedBox(height: 15),
+              Expanded(
+                child: Container(),
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -257,6 +275,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       await datesBox.clear();
                       await spotsBox.clear();
                       await plan.clear();
+
+                      debugPrint(spotsBox.values.length.toString());
 
                       Navigator.pushNamedAndRemoveUntil(
                         context,

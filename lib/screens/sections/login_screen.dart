@@ -120,8 +120,8 @@ class _GoogleSignInButtonState extends ConsumerState<GoogleSignInButton> {
               selectedBundles.selectedSpots.clear();
               allSpots.spots.clear();
 
-              await datesBox.clear();
               await spotsBox.clear();
+              await datesBox.clear();
               await plan.clear();
 
               User? user =
