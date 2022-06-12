@@ -153,7 +153,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget _signOutDialog() {
     final dates = ref.watch(datesProvider);
     final selectedBundles = ref.watch(selectedBundleProvider);
-    final allSpots = ref.watch(spotsProvider);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -191,7 +190,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     onPressed: () async {
                       dates.datesList.clear();
                       selectedBundles.selectedSpots.clear();
-                      allSpots.spots.clear();
 
                       await datesBox.clear();
                       await spotsBox.clear();
@@ -232,7 +230,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget _changePlanDialog() {
     final dates = ref.watch(datesProvider);
     final selectedBundles = ref.watch(selectedBundleProvider);
-    final allSpots = ref.watch(spotsProvider);
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -270,7 +267,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     onPressed: () async {
                       dates.datesList.clear();
                       selectedBundles.selectedSpots.clear();
-                      allSpots.spots.clear();
 
                       await datesBox.clear();
                       await spotsBox.clear();

@@ -35,32 +35,29 @@ class Bundles {
         final bundle = bundles[index.nextInt(bundles.length)];
         final spots = List<String>.from(bundle['spots']);
 
-        // if (spots
-        //     .toSet()
-        //     .intersection(bundleProvider.selectedSpots.toSet())
-        //     .isEmpty) {
-        bundleProvider.addSpots(spots);
+        if (!bundleProvider.selectedSpots.contains(bundle['name'])) {
+          bundleProvider.addSpot(bundle['name']);
 
-        final spotList = await Future.wait(spots.map((name) async {
-          final document = await getSpotByName(name);
+          final spotList = await Future.wait(spots.map((name) async {
+            final document = await getSpotByName(name);
 
-          debugPrint(bundle['name']);
+            debugPrint(bundle['name']);
 
-          return ConvertTo.touristSpot(document, userPosition.position!);
-        }).toList());
+            return ConvertTo.touristSpot(document, userPosition.position!);
+          }).toList());
 
-        for (var spot in spotList) {
-          spot.averageRating = await Reviews.reviewAverage(spot.name);
-          final spotItem = SpotsList(
-            spot: spot,
-            date: date,
-            isDone: false,
-          );
-          String boxKey = '$date${spot.name}';
+          for (var spot in spotList) {
+            spot.averageRating = await Reviews.reviewAverage(spot.name);
+            final spotItem = SpotsList(
+              spot: spot,
+              date: date,
+              isDone: false,
+            );
+            String boxKey = '$date${spot.name}';
 
-          spotsBox.put(boxKey, spotItem);
+            spotsBox.put(boxKey, spotItem);
+          }
         }
-        // }
       }
     }
 

@@ -34,8 +34,6 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
   final spotsList = Hive.box<SpotsList>('spots');
 
   late DatesList currentDate;
-  late double timeRemaining;
-
   @override
   Widget build(BuildContext context) {
     final selectedDates = ref.watch(datesProvider);
@@ -45,9 +43,6 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
 
     setState(() {
       currentDate = selectedDates.selectedDate ?? datesBox.values.first;
-      final dateInBox = selectedDates.findByDate(currentDate.dateTime);
-
-      timeRemaining = dateInBox!.timeRemaining;
     });
 
     return Scaffold(

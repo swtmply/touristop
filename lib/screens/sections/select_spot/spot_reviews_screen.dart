@@ -40,6 +40,9 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
   Widget build(BuildContext context) {
     final spot = widget.spot;
 
+    final rating =
+        spot.averageRating!.isNaN ? 0 : spot.averageRating!.toStringAsFixed(2);
+
     return Scaffold(
       body: Padding(
         padding:
@@ -133,7 +136,7 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                             color: Colors.amber,
                           ),
                         ),
-                        Text('${spot.averageRating!.toStringAsFixed(2)}/5')
+                        Text('$rating/5')
                       ],
                     ),
                   ],

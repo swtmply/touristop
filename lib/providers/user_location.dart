@@ -23,6 +23,14 @@ class UserLocationProvider extends ChangeNotifier {
     }
     _position = await Geolocator.getCurrentPosition();
   }
+
+  Stream<Position> getLiveLocation() {
+    return Geolocator.getPositionStream(
+        locationSettings: const LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 10,
+    ));
+  }
 }
 
 final userLocationProvider = ChangeNotifierProvider<UserLocationProvider>(

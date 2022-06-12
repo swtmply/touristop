@@ -27,6 +27,8 @@ class TouristSpot extends HiveObject {
   late double? distanceFromUser;
   @HiveField(10)
   late double numberOfHours;
+  @HiveField(11)
+  late String guideline;
 
   TouristSpot({
     required this.name,
@@ -40,5 +42,6 @@ class TouristSpot extends HiveObject {
     this.averageRating,
     this.distanceFromUser,
     required this.numberOfHours,
+    required this.guideline,
   });
 }

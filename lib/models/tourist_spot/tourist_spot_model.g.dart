@@ -28,13 +28,14 @@ class TouristSpotAdapter extends TypeAdapter<TouristSpot> {
       averageRating: fields[8] as double?,
       distanceFromUser: fields[9] as double?,
       numberOfHours: fields[10] as double,
+      guideline: fields[11] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, TouristSpot obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class TouristSpotAdapter extends TypeAdapter<TouristSpot> {
       ..writeByte(9)
       ..write(obj.distanceFromUser)
       ..writeByte(10)
-      ..write(obj.numberOfHours);
+      ..write(obj.numberOfHours)
+      ..writeByte(11)
+      ..write(obj.guideline);
   }
 
   @override

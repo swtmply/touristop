@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/providers/user_location.dart';
+import 'package:touristop/theme/app_colors.dart';
 
 class FloatingCards extends ConsumerWidget {
   const FloatingCards({
@@ -60,6 +61,10 @@ class FloatingCards extends ConsumerWidget {
                   spots[index].spot.position!.latitude,
                   spots[index].spot.position!.longitude,
                 );
+
+                inspect(userLocation.position);
+                inspect(spots[index].spot.position);
+
                 createPolyline(
                   LatLng(
                     userLocation.position?.latitude ?? 14.5995,
@@ -135,6 +140,31 @@ class FloatingCards extends ConsumerWidget {
                                 inspect(rating);
                               },
                             ),
+                            const SizedBox(height: 5),
+                            Container(
+                              width: 150,
+                              height: 30,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    AppColors.slime,
+                                    AppColors.coldBlue,
+                                  ],
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Directions',
+                                style: GoogleFonts.inter(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       ),

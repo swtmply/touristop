@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -12,6 +13,7 @@ import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_spots.dart';
 import 'package:touristop/screens/sections/select_spot/spot_information_screen.dart';
+import 'package:touristop/theme/app_colors.dart';
 import 'package:touristop/utils/reviews.dart';
 
 class SpotListItem extends ConsumerStatefulWidget {
@@ -175,8 +177,16 @@ class _SpotListItemState extends ConsumerState<SpotListItem> {
                           if (selectedItem.toString() == 'true') {
                             dates.updateDateList(widget.selectedDate,
                                 -widget.spot.numberOfHours);
+                            debugPrint(datesListItem.timeRemaining.toString());
+                            if (datesListItem.timeRemaining < 0.9) {
+                              Fluttertoast.showToast(
+                                msg: 'Number of hours per day exceeded.',
+                                backgroundColor:
+                                    const Color.fromARGB(187, 53, 53, 53),
+                                textColor: Colors.white,
+                              );
+                            }
                             spotsBox.put(key, spotItem);
-                            debugPrint('Spot Added');
                           } else {
                             dates.updateDateList(
                                 widget.selectedDate, widget.spot.numberOfHours);

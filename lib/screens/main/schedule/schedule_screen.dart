@@ -10,6 +10,7 @@ import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_spots.dart';
 import 'package:touristop/screens/sections/select_spot/spot_information_screen.dart';
+import 'package:touristop/screens/sections/select_spot/spot_reviews_screen.dart';
 import 'package:touristop/screens/sections/select_spots_dialog.dart';
 import 'package:touristop/theme/app_colors.dart';
 import 'package:collection/collection.dart';
@@ -36,12 +37,20 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
 
     _times.clear();
 
+    spots.sort(
+        (a, b) => a.spot.distanceFromUser! > b.spot.distanceFromUser! ? 1 : 0);
+
     spots.sort((a, b) {
       final day = DateFormat('E').format(_selectedDate).toString();
       final scheduleA =
               a.spot.dates.firstWhere((element) => element['date'] == day),
           scheduleB =
               b.spot.dates.firstWhere((element) => element['date'] == day);
+
+      if (scheduleA['timeClose'] == '6:00AM' ||
+          scheduleB['timeClose'] == '6:00AM') {
+        return 0;
+      }
 
       String timeA = (scheduleA['timeClose'] as String)
               .replaceAll(RegExp('[^0-9:]'), ''),
@@ -320,31 +329,34 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
           extentRatio: 0.45,
           motion: const ScrollMotion(),
           children: [
-            SlidableAction(
-              onPressed: (context) {
-                _spotsList![index].isDone = true;
+            _spotsList![index].isDone != true
+                ? SlidableAction(
+                    onPressed: (context) {
+                      _spotsList![index].isDone = true;
 
-                setState(() {
-                  this.spotIndex = 0;
-                });
-              },
-              backgroundColor: const Color.fromRGBO(93, 230, 197, 1),
-              foregroundColor: Colors.white,
-              icon: Icons.check_circle_outline,
-              label: 'Done',
-            ),
-            SlidableAction(
-              onPressed: (context) {},
-              backgroundColor: const Color.fromARGB(
-                255,
-                249,
-                97,
-                97,
-              ),
-              foregroundColor: Colors.white,
-              icon: Icons.cancel_outlined,
-              label: 'Delete',
-            ),
+                      setState(() {});
+                    },
+                    backgroundColor: const Color.fromRGBO(93, 230, 197, 1),
+                    foregroundColor: Colors.white,
+                    icon: Icons.check_circle_outline,
+                    label: 'Done',
+                  )
+                : SlidableAction(
+                    onPressed: (context) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SpotReviews(
+                            spot: _spotsList![index].spot,
+                          ),
+                        ),
+                      );
+                    },
+                    backgroundColor: AppColors.coldBlue,
+                    foregroundColor: Colors.white,
+                    icon: Icons.edit,
+                    label: 'Review',
+                  ),
           ],
         ),
         child: Container(

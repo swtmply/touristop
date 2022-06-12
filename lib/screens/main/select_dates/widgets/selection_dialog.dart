@@ -168,7 +168,9 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
 
                               // Build Tourist Spots
 
-                              await allSpots.init(userPosition.position!);
+                              if (allSpots.spots.isEmpty) {
+                                await allSpots.init(userPosition.position!);
+                              }
 
                               dates.setSelectedDate(dates.datesList.first);
                               if (selected == 'Plan your own trip') {

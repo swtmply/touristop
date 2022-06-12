@@ -214,6 +214,7 @@ class _ClusterSelectSpotsState extends ConsumerState<ClusterSelectSpots> {
       type: document['type'],
       numberOfHours: double.parse(document['numberOfHours'].toString()),
       averageRating: await Reviews.reviewAverage(document['name']),
+      guideline: document['guideline'],
     );
   }
 

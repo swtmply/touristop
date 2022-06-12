@@ -146,14 +146,14 @@ class DestinationCard extends StatelessWidget {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return Text(
-                  calculateByCases(snapshot.data!.activeCases),
+                  calculateByCases(snapshot.data!.deaths),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: snapshot.data!.activeCases > 20000
+                    color: snapshot.data!.deaths > 20000
                         ? Colors.red[500]
-                        : snapshot.data!.activeCases > 5000
-                            ? Colors.amber
+                        : snapshot.data!.deaths > 5000
+                            ? Colors.amber[700]
                             : Colors.green,
                   ),
                 );

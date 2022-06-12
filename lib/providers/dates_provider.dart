@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
+import 'package:touristop/theme/app_colors.dart';
 
 class DatesProvider extends ChangeNotifier {
   final List<DatesList> _datesList = [];
@@ -36,6 +38,7 @@ class DatesProvider extends ChangeNotifier {
     final datesList = datesBox.get(toDateKey(date));
 
     datesList!.timeRemaining += hours;
+
     datesList.save();
 
     notifyListeners();

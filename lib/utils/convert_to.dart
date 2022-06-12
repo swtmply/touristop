@@ -27,6 +27,7 @@ class ConvertTo {
       dates: document['dates'],
       type: document['type'],
       numberOfHours: double.parse(document['numberOfHours'].toString()),
+      guideline: document['guideline'],
     );
   }
 }
