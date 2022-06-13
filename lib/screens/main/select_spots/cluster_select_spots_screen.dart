@@ -251,6 +251,7 @@ class _ClusterSpotListItem extends ConsumerState<ClusterSpotListItem> {
             builder: (context) => SpotInformation(
               spot: widget.spot,
               isSelectable: false,
+              selectedDate: DateTime.now(),
             ),
           ),
         );

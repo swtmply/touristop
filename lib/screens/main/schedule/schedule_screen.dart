@@ -322,6 +322,7 @@ class _ScheduleScreenState extends ConsumerState<ScheduleScreen> {
               spot: _spotsList![index].spot,
               isSelectable: false,
               isSchedule: true,
+              selectedDate: _selectedDate,
             ),
           ),
         );

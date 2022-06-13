@@ -34,6 +34,7 @@ class _SelectSpotsScreenState extends ConsumerState<SelectSpotsScreen> {
   final spotsList = Hive.box<SpotsList>('spots');
 
   late DatesList currentDate;
+
   @override
   Widget build(BuildContext context) {
     final selectedDates = ref.watch(datesProvider);

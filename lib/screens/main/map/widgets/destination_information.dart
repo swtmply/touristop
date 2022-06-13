@@ -134,6 +134,7 @@ class DestinationInformation extends ConsumerWidget {
                               builder: (context) => SpotInformation(
                                 spot: selectedSpot!,
                                 isSelectable: false,
+                                selectedDate: DateTime.now(),
                               ),
                             ),
                           );

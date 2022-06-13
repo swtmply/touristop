@@ -62,6 +62,7 @@ class _SpotListItemState extends ConsumerState<SpotListItem> {
               spot: widget.spot,
               isSelectable: isSelectable,
               isSelected: isSelected,
+              selectedDate: widget.selectedDate,
             ),
           ),
         );
@@ -165,31 +166,13 @@ class _SpotListItemState extends ConsumerState<SpotListItem> {
                   isChecked: isSelected,
                   onTap: isSelectable || isSelected
                       ? (selectedItem) {
-                          final spotItem = SpotsList(
-                            spot: widget.spot,
-                            date: widget.selectedDate,
-                            isDone: false,
-                            isSelected: true,
+                          _addToSchedule(
+                            selectedItem,
+                            dates,
+                            datesListItem,
+                            spotsBox,
+                            key,
                           );
-
-                          if (selectedItem.toString() == 'true') {
-                            dates.updateDateList(widget.selectedDate,
-                                -widget.spot.numberOfHours);
-                            debugPrint(datesListItem.timeRemaining.toString());
-                            if (datesListItem.timeRemaining < 0.9) {
-                              Fluttertoast.showToast(
-                                msg: 'This day’s maximum hour has been reached',
-                                backgroundColor:
-                                    const Color.fromARGB(187, 53, 53, 53),
-                                textColor: Colors.white,
-                              );
-                            }
-                            spotsBox.put(key, spotItem);
-                          } else {
-                            dates.updateDateList(
-                                widget.selectedDate, widget.spot.numberOfHours);
-                            spotsBox.delete(key);
-                          }
                         }
                       : null,
                   size: 25,
@@ -210,5 +193,30 @@ class _SpotListItemState extends ConsumerState<SpotListItem> {
         ],
       ),
     );
+  }
+
+  void _addToSchedule(bool? selectedItem, DatesProvider dates,
+      DatesList datesListItem, Box<SpotsList> spotsBox, String key) {
+    final spotItem = SpotsList(
+      spot: widget.spot,
+      date: widget.selectedDate,
+      isDone: false,
+      isSelected: true,
+    );
+
+    if (selectedItem.toString() == 'true') {
+      dates.updateDateList(widget.selectedDate, -widget.spot.numberOfHours);
+      if (datesListItem.timeRemaining < 0.9) {
+        Fluttertoast.showToast(
+          msg: 'This day’s maximum hour has been reached',
+          backgroundColor: const Color.fromARGB(187, 53, 53, 53),
+          textColor: Colors.white,
+        );
+      }
+      spotsBox.put(key, spotItem);
+    } else {
+      dates.updateDateList(widget.selectedDate, widget.spot.numberOfHours);
+      spotsBox.delete(key);
+    }
   }
 }

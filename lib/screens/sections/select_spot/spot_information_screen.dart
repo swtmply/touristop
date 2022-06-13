@@ -21,6 +21,7 @@ class SpotInformation extends ConsumerStatefulWidget {
   final bool isSelectable;
   final bool? isSchedule;
   final bool? isSelected;
+  final DateTime selectedDate;
 
   const SpotInformation({
     Key? key,
@@ -28,6 +29,7 @@ class SpotInformation extends ConsumerStatefulWidget {
     required this.isSelectable,
     this.isSchedule,
     this.isSelected,
+    required this.selectedDate,
   }) : super(key: key);
 
   @override
@@ -50,8 +52,7 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
     final allSpots = ref.watch(spotsProvider);
     final dates = ref.watch(datesProvider);
     final datesBox = Hive.box<DatesList>('dates');
-    final key =
-        selectedDates.selectedDate?.dateTime ?? datesBox.values.first.dateTime;
+    final key = widget.selectedDate;
     final datesListItem = datesBox.get(dates.toDateKey(key));
 
     setState(() {
@@ -256,8 +257,12 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                                 ? () {
                                     final spotItem = SpotsList(
                                       spot: spot,
-                                      date:
-                                          selectedDates.selectedDate!.dateTime,
+                                      date: widget.selectedDate,
+                                    );
+
+                                    dates.updateDateList(
+                                      widget.selectedDate,
+                                      -widget.spot.numberOfHours,
                                     );
 
                                     setState(() {
@@ -294,9 +299,10 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                                       : "Add to Schedule",
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.inter(
-                                      fontSize: 16,
-                                      color: const Color.fromRGBO(
-                                          130, 130, 130, 1)),
+                                    fontSize: 16,
+                                    color:
+                                        const Color.fromRGBO(130, 130, 130, 1),
+                                  ),
                                 ),
                               ],
                             ),
@@ -451,6 +457,7 @@ class _SpotInformationState extends ConsumerState<SpotInformation> {
                                 builder: (context) => SpotInformation(
                                   spot: data,
                                   isSelectable: isSelectable,
+                                  selectedDate: widget.selectedDate,
                                 ),
                               ),
                             );
