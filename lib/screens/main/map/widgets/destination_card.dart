@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dash_nullsafety/flutter_dash_nullsafety.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

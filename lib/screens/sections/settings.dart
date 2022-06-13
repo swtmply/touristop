@@ -9,8 +9,6 @@ import 'package:touristop/models/plan.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_bundle.dart';
-import 'package:touristop/providers/spots_provider.dart';
-import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/theme/app_colors.dart';
 import 'package:touristop/utils/authentication.dart';
 
@@ -87,7 +85,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 style: ButtonStyle(
                                   alignment: Alignment.centerLeft,
                                   foregroundColor: MaterialStateProperty.all(
-                                    Color.fromARGB(255, 68, 68, 68),
+                                    const Color.fromARGB(255, 68, 68, 68),
                                   ),
                                 ),
                               ),

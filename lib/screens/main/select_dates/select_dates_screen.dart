@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
-import 'package:touristop/models/selected_spots/selected_spots_model.dart';
-import 'package:touristop/models/spots_list/spots_list_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/screens/main/select_dates/widgets/date_picker_dialog.dart';
 import 'package:touristop/screens/main/select_dates/widgets/selection_dialog.dart';
@@ -110,14 +107,17 @@ class _SelectDatesScreenState extends ConsumerState<SelectDatesScreen> {
                                       dates.datesList.clear();
 
                                       for (var i = 0;
-                                          i < daysBetween + 1;
+                                          i < daysBetween + 2;
                                           i++) {
-                                        final date =
-                                            first!.add(Duration(days: i));
+                                        final date = first!.add(
+                                          Duration(days: i),
+                                        );
 
                                         dates.datesList.add(
                                           DatesList(
-                                              dateTime: date, timeRemaining: 8),
+                                            dateTime: date,
+                                            timeRemaining: 8,
+                                          ),
                                         );
                                       }
                                     });

@@ -151,18 +151,11 @@ class _SelectionDialogState extends ConsumerState<SelectionDialog> {
 
                               widget.onLoading(false);
 
-                              final finalDates = dates.datesList.map(
-                                (e) => DatesList(
-                                  dateTime: e.dateTime,
-                                  timeRemaining: 8,
-                                ),
-                              );
-
                               await userPosition.locateUser();
 
                               await datesBox.clear();
                               datesBox.putAll({
-                                for (var e in finalDates)
+                                for (var e in dates.datesList)
                                   dates.toDateKey(e.dateTime): e
                               });
 

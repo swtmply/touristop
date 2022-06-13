@@ -5,7 +5,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:intl/intl.dart';
 import 'package:roundcheckbox/roundcheckbox.dart';
 import 'package:touristop/models/dates_list/dates_list_model.dart';
 import 'package:touristop/models/spots_list/spots_list_model.dart';
@@ -13,7 +12,6 @@ import 'package:touristop/models/tourist_spot/tourist_spot_model.dart';
 import 'package:touristop/providers/dates_provider.dart';
 import 'package:touristop/providers/selected_spots.dart';
 import 'package:touristop/screens/sections/select_spot/spot_information_screen.dart';
-import 'package:touristop/theme/app_colors.dart';
 import 'package:touristop/utils/reviews.dart';
 
 class SpotListItem extends ConsumerStatefulWidget {
@@ -180,7 +178,7 @@ class _SpotListItemState extends ConsumerState<SpotListItem> {
                             debugPrint(datesListItem.timeRemaining.toString());
                             if (datesListItem.timeRemaining < 0.9) {
                               Fluttertoast.showToast(
-                                msg: 'Number of hours per day exceeded.',
+                                msg: 'This day’s maximum hour has been reached',
                                 backgroundColor:
                                     const Color.fromARGB(187, 53, 53, 53),
                                 textColor: Colors.white,

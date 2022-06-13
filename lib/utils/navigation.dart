@@ -5,7 +5,6 @@ import 'package:touristop/models/plan.dart';
 import 'package:touristop/providers/user_location.dart';
 import 'package:touristop/screens/main/map/map_screen.dart';
 import 'package:touristop/screens/main/schedule/schedule_screen.dart';
-import 'package:touristop/screens/main/select_spots/select_spots_screen.dart';
 import 'package:touristop/screens/sections/settings.dart';
 import 'package:touristop/theme/app_colors.dart';
 

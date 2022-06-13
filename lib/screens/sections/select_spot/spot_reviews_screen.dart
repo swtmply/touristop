@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_return_type_for_catch_error
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -386,8 +388,10 @@ class _SpotReviewsState extends ConsumerState<SpotReviews> {
                             'userPhoto': user?.photoURL,
                             'spot': spot.name,
                             'rating': rating
-                          }).catchError((error) =>
-                              debugPrint('Failed to add comment: $error'));
+                          }).catchError(
+                            (error) =>
+                                debugPrint('Failed to add comment: $error'),
+                          );
 
                           Navigator.pop(context);
                           reviewField.clear();
