@@ -12,22 +12,33 @@ import 'package:touristop/models/distance.dart';
 import 'package:touristop/screens/destination_information/destination_information.dart';
 import 'package:touristop/theme/app_colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:touristop/theme/app_spacing.dart';
 
-class SelectedDestinationCard extends StatelessWidget {
-  const SelectedDestinationCard(
-      {Key? key,
-      required this.destination,
-      required this.onClose,
-      required this.userPosition})
-      : super(key: key);
+class SelectedDestinationCard extends StatefulWidget {
+  const SelectedDestinationCard({
+    Key? key,
+    required this.destination,
+    required this.onClose,
+    required this.userPosition,
+    required this.mode,
+    required this.setMode,
+  }) : super(key: key);
 
   final Destination? destination;
   final Function onClose;
   final Position userPosition;
+  final String mode;
+  final Function setMode;
 
-  Future<Distance> fetchDistance(LatLng destination) async {
+  @override
+  State<SelectedDestinationCard> createState() =>
+      _SelectedDestinationCardState();
+}
+
+class _SelectedDestinationCardState extends State<SelectedDestinationCard> {
+  Future<Distance> fetchDistance(LatLng destination, String mode) async {
     final url =
-        'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${userPosition.latitude},${userPosition.longitude}&destinations=${destination.latitude},${destination.longitude}&key=AIzaSyAjMSWhlbBDUTmEjl3sdBLFdTA6x0LbCCs';
+        'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${widget.userPosition.latitude},${widget.userPosition.longitude}&destinations=${destination.latitude},${destination.longitude}&mode=$mode&key=AIzaSyAjMSWhlbBDUTmEjl3sdBLFdTA6x0LbCCs';
 
     final response = await http.get(
       Uri.parse(url),
@@ -94,7 +105,7 @@ class SelectedDestinationCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(
-                        width: 10,
+                        width: AppSpacing.small,
                       ),
                       Expanded(
                         child: Column(
@@ -138,7 +149,7 @@ class SelectedDestinationCard extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  destination!.name,
+                                  widget.destination!.name,
                                   maxLines: 2,
                                   style: const TextStyle(
                                     fontSize: 18,
@@ -148,6 +159,83 @@ class SelectedDestinationCard extends StatelessWidget {
                                 ),
                               ],
                             ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: AppSpacing.small,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.darkGray,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
+                                onPressed: () {
+                                  widget.setMode('driving');
+                                },
+                                icon: FaIcon(
+                                  FontAwesomeIcons.car,
+                                  size: 16,
+                                  color: widget.mode == 'driving'
+                                      ? AppColors.slime
+                                      : Colors.black,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.darkGray,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
+                                onPressed: () {
+                                  widget.setMode('walking');
+                                },
+                                icon: FaIcon(
+                                  FontAwesomeIcons.personWalking,
+                                  size: 16,
+                                  color: widget.mode == 'walking'
+                                      ? AppColors.slime
+                                      : Colors.black,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.darkGray,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
+                                onPressed: () {
+                                  widget.setMode('transit');
+                                },
+                                icon: FaIcon(
+                                  FontAwesomeIcons.trainSubway,
+                                  size: 16,
+                                  color: widget.mode == 'transit'
+                                      ? AppColors.slime
+                                      : Colors.black,
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       )
@@ -197,9 +285,10 @@ class SelectedDestinationCard extends StatelessWidget {
               child: FutureBuilder(
                 future: fetchDistance(
                   LatLng(
-                    destination!.position.latitude,
-                    destination!.position.longitude,
+                    widget.destination!.position.latitude,
+                    widget.destination!.position.longitude,
                   ),
+                  widget.mode,
                 ),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -263,7 +352,7 @@ class SelectedDestinationCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       image: DecorationImage(
                         image: NetworkImage(
-                          destination!.images.first,
+                          widget.destination!.images.first,
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -281,7 +370,7 @@ class SelectedDestinationCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                destination!.name,
+                                widget.destination!.name,
                                 overflow: TextOverflow.clip,
                                 maxLines: 2,
                                 style: const TextStyle(
@@ -293,7 +382,7 @@ class SelectedDestinationCard extends StatelessWidget {
                             Container(
                               alignment: Alignment.topRight,
                               child: TextButton(
-                                onPressed: () => onClose(),
+                                onPressed: () => widget.onClose(),
                                 child: const Icon(Icons.close),
                               ),
                             ),
@@ -303,7 +392,7 @@ class SelectedDestinationCard extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          destination!.description,
+                          widget.destination!.description,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -320,7 +409,7 @@ class SelectedDestinationCard extends StatelessWidget {
                           ),
                           unratedColor: AppColors.gray,
                           itemSize: 25,
-                          rating: destination!.rating!,
+                          rating: widget.destination!.rating!,
                         ),
                         const SizedBox(
                           height: 5,
@@ -351,7 +440,7 @@ class SelectedDestinationCard extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => DestinationInformation(
-                                    destination: destination!,
+                                    destination: widget.destination!,
                                   ),
                                 ),
                               );

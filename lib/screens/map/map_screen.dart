@@ -68,6 +68,22 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     setState(() {});
   }
 
+  String _mode = 'driving';
+  TravelMode _travelMode = TravelMode.driving;
+
+  void _setMode(String mode) {
+    setState(() {
+      _mode = mode;
+      if (_mode == 'walking') {
+        _travelMode = TravelMode.walking;
+      } else if (_mode == 'transit') {
+        _travelMode = TravelMode.transit;
+      } else {
+        _travelMode = TravelMode.driving;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final userLocation = ref.watch(userLocationProvider);
@@ -137,9 +153,12 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 child: SelectedDestinationCard(
                   userPosition: position,
                   destination: _selectedDestination,
+                  mode: _mode,
+                  setMode: _setMode,
                   onClose: () {
                     setState(() {
                       _selectedDestination = null;
+                      _removePolylines();
                     });
                   },
                 ),
