@@ -15,6 +15,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.0"
+  animated_splash_screen:
+    dependency: "direct main"
+    description:
+      name: animated_splash_screen
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   archive:
     dependency: transitive
     description:
@@ -190,6 +197,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.3"
+  dots_indicator:
+    dependency: transitive
+    description:
+      name: dots_indicator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.0"
   dropdown_button2:
     dependency: "direct main"
     description:
@@ -548,6 +562,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.17.0"
+  introduction_screen:
+    dependency: "direct main"
+    description:
+      name: introduction_screen
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.2"
   io:
     dependency: transitive
     description:
@@ -625,6 +646,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
+  page_transition:
+    dependency: transitive
+    description:
+      name: page_transition
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.9"
   path:
     dependency: transitive
     description:

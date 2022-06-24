@@ -46,7 +46,10 @@ dependencies:
   flutter_tts: ^3.4.0
   flutter_slidable: ^1.3.0
   flutter_dash_nullsafety: ^1.0.0
+  # app
   flutter_launcher_icons: ^0.9.3
+  animated_splash_screen: ^1.2.0
+  introduction_screen: ^3.0.2
 
 dev_dependencies:
   flutter_test:

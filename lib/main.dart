@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,10 +12,8 @@ import 'package:touristop/models/destination/destination_model.dart';
 import 'package:touristop/models/schedule/schedule_model.dart';
 import 'package:touristop/models/schedule/selected_destination.dart';
 import 'package:touristop/screens/date_selection/date_selection_screen.dart';
-import 'package:touristop/screens/destination_selection/destination_selection_screen.dart';
-import 'package:touristop/screens/login_screen.dart';
 import 'package:touristop/screens/main_screen.dart';
-import 'package:touristop/screens/schedule/schedule_screen.dart';
+import 'package:touristop/screens/onboarding_page.dart';
 import 'package:touristop/theme/app_colors.dart';
 import 'package:touristop/utils/boxes.dart';
 
@@ -43,6 +43,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
+    final schedule = Hive.box<Schedule>(Boxes.schedule);
+
     return MaterialApp(
       title: 'Touristop',
       debugShowCheckedModeBanner: false,
@@ -51,7 +54,25 @@ class _MyAppState extends State<MyApp> {
         scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.interTextTheme(),
       ),
-      home: const LoginScreen(),
+      home: AnimatedSplashScreen(
+        splashIconSize: 1000,
+        animationDuration: const Duration(seconds: 1),
+        splash: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: AppColors.cbToSlime,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Image.asset('assets/images/touristop_logo.png'),
+        ),
+        nextScreen: user == null
+            ? const OnboardingPage()
+            : schedule.values.isEmpty
+                ? const DateSelectionScreen()
+                : const MainScreen(),
+      ),
     );
   }
 }

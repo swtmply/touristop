@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:touristop/models/schedule/schedule_model.dart';
 import 'package:touristop/models/schedule/selected_destination.dart';
 import 'package:touristop/screens/date_selection/date_selection_screen.dart';
 import 'package:touristop/screens/history_screen.dart';
@@ -20,6 +21,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final selectedDestinationsBox =
       Hive.box<SelectedDestination>(Boxes.selectedDestinations);
+  final schedule = Hive.box<Schedule>(Boxes.schedule);
   final User? user = FirebaseAuth.instance.currentUser;
 
   @override
@@ -169,6 +171,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     context: context,
                                   );
                                   await selectedDestinationsBox.clear();
+                                  await schedule.clear();
 
                                   // ignore: use_build_context_synchronously
                                   Navigator.pushAndRemoveUntil(
