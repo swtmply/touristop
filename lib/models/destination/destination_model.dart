@@ -216,7 +216,7 @@ class Destination extends HiveObject {
       position: position,
       type: data['type'],
       schedule: schedule.toList(),
-      images: [data['image']],
+      images: List.from(data['image']),
       rating: await averageRating(snapshot.id),
     );
 
