@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
+import 'package:flutter_carousel_slider/carousel_slider_indicators.dart';
+import 'package:flutter_carousel_slider/carousel_slider_transforms.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_indicator/loading_indicator.dart';
@@ -29,6 +32,12 @@ class DestinationInformation extends StatelessWidget {
     await flutterTts.speak(destination.description);
   }
 
+  // Future getimgfromFirebase() async {
+  //   var firestore = FirebaseFirestore.instance;
+  //   QuerySnapshot qn = await FirebaseFirestore.instance.collection('spots').getDocuments();
+  //   return qn.documents;
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,30 +47,28 @@ class DestinationInformation extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Container(
-                  height: 260,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color.fromRGBO(93, 107, 230, 1),
-                        Color.fromRGBO(93, 230, 197, 1),
-                      ],
-                    ),
-                    image: DecorationImage(
-                      image: NetworkImage(destination.images.first),
-                      fit: BoxFit.fill,
-                      colorFilter: ColorFilter.mode(
-                        const Color.fromARGB(255, 0, 0, 0).withOpacity(0.6),
-                        BlendMode.darken,
-                      ),
-                    ),
-                  ),
+               Container(
+                height: 300,
+                  child: CarouselSlider.builder(
+                            slideBuilder: (index){
+                              final sliderimage = destination.images[index];
+                              return Container(
+                                child: Image.network(sliderimage,
+                                fit: BoxFit.fill),
+                              );
+                            },
+                            unlimitedMode: true,
+                            autoSliderTransitionTime: const Duration(seconds: 3),
+                            enableAutoSlider: true,
+                            autoSliderDelay: const Duration(seconds: 3),
+                            slideTransform: const CubeTransform(
+                              rotationAngle: 4
+                            ),
+                            itemCount: destination.images.length,
+                            ),
                 ),
                 Container(
-                  padding: const EdgeInsets.only(top: 30, left: 20),
+                  padding: const EdgeInsets.only(top: 10, left: 20),
                   child: Align(
                     alignment: Alignment.topLeft,
                     child: TextButton.icon(
