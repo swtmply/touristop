@@ -124,7 +124,7 @@ class _ReplaceDestinationListItemState
           },
           child: Container(
             margin: const EdgeInsets.only(bottom: AppSpacing.small),
-            height: 150,
+            height: 160,
             width: double.infinity,
             decoration: BoxDecoration(
               gradient: const LinearGradient(

@@ -47,25 +47,22 @@ class DestinationInformation extends StatelessWidget {
           children: [
             Stack(
               children: [
-               Container(
-                height: 300,
+                Container(
+                  height: 300,
                   child: CarouselSlider.builder(
-                            slideBuilder: (index){
-                              final sliderimage = destination.images[index];
-                              return Container(
-                                child: Image.network(sliderimage,
-                                fit: BoxFit.fill),
-                              );
-                            },
-                            unlimitedMode: true,
-                            autoSliderTransitionTime: const Duration(seconds: 3),
-                            enableAutoSlider: true,
-                            autoSliderDelay: const Duration(seconds: 3),
-                            slideTransform: const CubeTransform(
-                              rotationAngle: 4
-                            ),
-                            itemCount: destination.images.length,
-                            ),
+                    slideBuilder: (index) {
+                      final sliderimage = destination.images[index];
+                      return Container(
+                        child: Image.network(sliderimage, fit: BoxFit.fill),
+                      );
+                    },
+                    unlimitedMode: true,
+                    autoSliderTransitionTime: const Duration(seconds: 3),
+                    enableAutoSlider: true,
+                    autoSliderDelay: const Duration(seconds: 3),
+                    slideTransform: const CubeTransform(rotationAngle: 4),
+                    itemCount: destination.images.length,
+                  ),
                 ),
                 Container(
                   padding: const EdgeInsets.only(top: 10, left: 20),
