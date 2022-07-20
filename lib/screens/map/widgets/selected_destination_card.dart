@@ -22,11 +22,13 @@ class SelectedDestinationCard extends StatefulWidget {
     required this.userPosition,
     required this.mode,
     required this.setMode,
+    required this.onModeChange,
   }) : super(key: key);
 
   final Destination? destination;
   final Function onClose;
-  final Position userPosition;
+  final LatLng userPosition;
+  final Function onModeChange;
   final String mode;
   final Function setMode;
 
@@ -182,6 +184,7 @@ class _SelectedDestinationCardState extends State<SelectedDestinationCard> {
                                 constraints: BoxConstraints(),
                                 onPressed: () {
                                   widget.setMode('driving');
+                                  widget.onModeChange('driving');
                                 },
                                 icon: FaIcon(
                                   FontAwesomeIcons.car,
@@ -204,6 +207,7 @@ class _SelectedDestinationCardState extends State<SelectedDestinationCard> {
                                 constraints: BoxConstraints(),
                                 onPressed: () {
                                   widget.setMode('walking');
+                                  widget.onModeChange('walking');
                                 },
                                 icon: FaIcon(
                                   FontAwesomeIcons.personWalking,
@@ -226,6 +230,7 @@ class _SelectedDestinationCardState extends State<SelectedDestinationCard> {
                                 constraints: BoxConstraints(),
                                 onPressed: () {
                                   widget.setMode('transit');
+                                  widget.onModeChange('transit');
                                 },
                                 icon: FaIcon(
                                   FontAwesomeIcons.trainSubway,
@@ -324,6 +329,7 @@ class _SelectedDestinationCardState extends State<SelectedDestinationCard> {
                         (snapshot.data as Distance).time,
                         style: const TextStyle(
                           fontSize: 12,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
